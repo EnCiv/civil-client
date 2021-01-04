@@ -14,10 +14,6 @@ mkdir -p /tmp
 mkdir -p assets/js
 cp node_modules/socket.io-stream/socket.io-stream.js assets/js/
 
-echo '***'
-echo Svgr
-echo '***'
-npm run svgr
 
 echo '*************************************************************************'
 echo TRANSPILE

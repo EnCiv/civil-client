@@ -2,15 +2,15 @@
 
 import React from 'react'
 import injectSheet from 'react-jss'
-import cx from 'classnames'
 
-import DebugOverlay from '../debug-overlay'
-
-import Join from '../join'
+import AuthForm from '../auth-form'
 
 const styles = {
   join: {
-    'margin-right': '1em',
+    position: 'absolute',
+    left: '50%',
+    top: '50%',
+    transform: 'translate(-50%,-50%)',
     'button&': {
       'margin-left': '1em',
       'padding-top': '0.5em',
@@ -29,7 +29,7 @@ const styles = {
   },
 }
 
-class TestJoin extends React.Component {
+class Join extends React.Component {
   state = { info: 'empty' }
 
   onUserLogin(info) {
@@ -40,11 +40,11 @@ class TestJoin extends React.Component {
   render() {
     return (
       <div style={{ width: '100vw', height: '100vh', textAlign: 'center', verticalAlign: 'middle' }}>
-        <Join className={this.props.classes['join']} onChange={this.onUserLogin.bind(this)}></Join>
+        <AuthForm className={this.props.classes['join']} onChange={this.onUserLogin.bind(this)} />
         <div>info: {JSON.stringify(this.state.info)}</div>
       </div>
     )
   }
 }
 
-export default injectSheet(styles)(TestJoin)
+export default injectSheet(styles)(Join)

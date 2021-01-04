@@ -1,20 +1,22 @@
 import React, { useState, useEffect } from 'react'
-import injectSheet from 'react-jss'
 import superagent from 'superagent'
 import isEmail from 'is-email'
-import { FormInput } from './formInput'
 import { JoinForm } from './joinForm'
 import { LoginForm } from './loginForm'
 import { Tabs } from './tabs/Tabs'
-const PreInject = props => {
+import { createUseStyles } from 'react-jss'
+
+const AuthForm = props => {
+  const { className, userInfo, onChange, newLocation } = props
+  const classes = useStyles()
   const [hasAgreed, setHasAgreed] = useState(false)
   const [onLogin, setOnLogin] = useState(false)
   const [formValues, setFormValues] = useState({
     email: '',
     password: '',
     confirmPassword: '',
-    firstName: props.userInfo.firstName || '',
-    lastName: props.userInfo.lastName || '',
+    firstName: userInfo && userInfo.firstName || '',
+    lastName: userInfo && userInfo.lastName || '',
   })
   const [isDisabled, setIsDisabled] = useState(true)
   const [infoMessage, setInfoMessage] = useState(null)
@@ -99,10 +101,10 @@ const PreInject = props => {
             break
           case 200:
             setInfoMessage('Welcome aboard!')
-            if (props.onChange) {
-              authenticateSocketIo(() => props.onChange({ userId: JSON.parse(res.text).id, firstName, lastName }))
+            if (onChange) {
+              authenticateSocketIo(() => onChange({ userId: JSON.parse(res.text).id, firstName, lastName }))
             } else {
-              setTimeout(() => (location.href = props.newLocation ? props.newLocation : window.location.pathname))
+              setTimeout(() => (location.href = newLocation ? newLocation : window.location.pathname))
             }
             break
           default:
@@ -117,7 +119,7 @@ const PreInject = props => {
     setLoginErrors(null)
     setInfoMessage('Logging you in...')
     const { email, password } = formValues
-    const userInfo = Object.assign({}, props.userInfo, { email, password })
+    const userInfo = Object.assign({}, userInfo, { email, password })
     superagent
       .post('/sign/in')
       .send(userInfo)
@@ -130,10 +132,10 @@ const PreInject = props => {
             break
           case 200:
             setInfoMessage('Welcome back')
-            if (props.onChange) {
-              authenticateSocketIo(() => props.onChange({ userId: JSON.parse(res.text).id }))
+            if (onChange) {
+              authenticateSocketIo(() => onChange({ userId: JSON.parse(res.text).id }))
             } else {
-              setTimeout(() => (location.href = props.newLocation ? props.newLocation : window.location.pathname), 800)
+              setTimeout(() => (location.href = newLocation ? newLocation : window.location.pathname), 800)
             }
             break
           default:
@@ -167,9 +169,8 @@ const PreInject = props => {
       window.socket.close()
     } else cb()
   }
-  const { classes } = props
   return (
-    <div className={props.classes.authFormWrapper}>
+    <div className={className ? className + ' ' + classes.authFormWrapper : classes.authFormWrapper}>
       <Tabs classes={classes} onLogin={onLogin} handleTabSwitch={handleTabSwitch} />
       <form onSubmit={onLogin ? handleLogin : handleSignUp}>
         {onLogin ? (
@@ -190,25 +191,26 @@ const PreInject = props => {
             loginErrors={loginErrors}
           />
         ) : (
-          <JoinForm
-            handleSignUp={handleSignUp}
-            hasAgreed={hasAgreed}
-            setHasAgreed={setHasAgreed}
-            formValidationErrors={formValidationErrors}
-            handleOnBlur={handleOnBlur}
-            handleChange={handleChange}
-            formValues={formValues}
-            infoMessage={infoMessage}
-            isDisabled={isDisabled}
-            classes={classes}
-            validationMessages={validationMessages}
-          />
-        )}
+            <JoinForm
+              handleSignUp={handleSignUp}
+              hasAgreed={hasAgreed}
+              setHasAgreed={setHasAgreed}
+              formValidationErrors={formValidationErrors}
+              handleOnBlur={handleOnBlur}
+              handleChange={handleChange}
+              formValues={formValues}
+              infoMessage={infoMessage}
+              isDisabled={isDisabled}
+              classes={classes}
+              validationMessages={validationMessages}
+            />
+          )}
       </form>
     </div>
   )
 }
-const styles = {
+
+const useStyles = createUseStyles({
   authFormWrapper: {
     border: '0.5px solid black',
     padding: '3rem',
@@ -280,5 +282,5 @@ const styles = {
     color: 'red',
     width: '100%',
   },
-}
-export const AuthForm = injectSheet(styles)(PreInject)
+})
+export default AuthForm

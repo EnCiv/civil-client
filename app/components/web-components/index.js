@@ -7,18 +7,7 @@
 // Also, TypeComponent.attributes() will return module.attributes if it is defined.
 
 const WebComponents = {
-  TestJoin: require('./test-join'),
-  Undebate: require('./undebate'),
-  CandidateConversation: require('./candidate-conversation'),
-  UndebateLine: require('./undebate-line'),
-  UndebateIframes: require('./undebate-iframes'),
-  Unpoll: require('./unpoll'),
-  HartfordVotes: require('./HartfordVotes'),
-  FAQ: require('./FAQ'),
-  About: require('./About'),
-  RecorderInstructions: require('./RecorderInstructions'),
-  CcWrapper: require('./cc-wrapper'),
-  Note: require('./note'),
+  Join: require('./join'),
 }
 
 import React from 'react'

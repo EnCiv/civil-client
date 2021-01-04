@@ -6,12 +6,7 @@
 // TypeComponent will accept a function (.default) or a module (exports), so you don't need to add .default to new entries.
 // Also, TypeComponent.attributes() will return module.attributes if it is defined.
 
-const Components = {
-  CafeParticipants: require('./cafe-participants'),
-  MergeParticipants: require('./merge-participants'),
-  UndebateCreator: require('./undebate-creator'),
-  MergeChildren: require('./merge-children'),
-}
+const Components = {}
 
 export class DataComponent {
   static attributes(component) {

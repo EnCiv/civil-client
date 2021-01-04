@@ -47,7 +47,10 @@ if (
     NoSocket: true,
   }
 }
-
+if (typeof process === 'undefined')
+  global.process = {}
+if (!process.env) process.env = {}
+if (!process.env.NODE_ENV) process.env.NODE_ENV = "development"
 // process has to be defined before log4js is imported on the browser side.
 process.env.LOG4JS_CONFIG = { appenders: [] } // webpack doesn't initialize the socket logger right - so just prevent log4js from initializing loggers
 var log4js = require('log4js')
