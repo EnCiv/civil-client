@@ -1,5 +1,5 @@
 import React from 'react'
-import { Tab } from './Tab'
+
 export const Tabs = ({ classes, onLogin, handleTabSwitch }) => {
   return (
     <div className={classes.tabs}>
@@ -16,3 +16,13 @@ export const Tabs = ({ classes, onLogin, handleTabSwitch }) => {
     </div>
   )
 }
+
+export const Tab = ({ classes, handleClick, tabText }) => {
+  return (
+    <div className={classes} onClick={() => handleClick()}>
+      {tabText}
+    </div>
+  )
+}
+
+export default Tabs

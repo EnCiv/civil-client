@@ -3,7 +3,7 @@ import superagent from 'superagent'
 import isEmail from 'is-email'
 import { JoinForm } from './joinForm'
 import { LoginForm } from './loginForm'
-import { Tabs } from './tabs/Tabs'
+import { Tabs } from './tabs'
 import { createUseStyles } from 'react-jss'
 
 const AuthForm = props => {
@@ -85,10 +85,10 @@ const AuthForm = props => {
     setFormValidationErrors([])
     setInfoMessage('Signing you up...')
     const { email, password } = formValues
-    const userInfo = { email, password, firstName, lastName }
+    const updatedUserInfo = { email, password, firstName, lastName }
     superagent
       .post('/sign/up')
-      .send(userInfo)
+      .send(updatedUserInfo)
       .end((err, res) => {
         if (err) {
           logger.error('Join.signup error', err)
@@ -119,10 +119,10 @@ const AuthForm = props => {
     setLoginErrors(null)
     setInfoMessage('Logging you in...')
     const { email, password } = formValues
-    const userInfo = Object.assign({}, userInfo, { email, password })
+    const updatedUserInfo = Object.assign({}, userInfo, { email, password })
     superagent
       .post('/sign/in')
-      .send(userInfo)
+      .send(updatedUserInfo)
       .end((err, res) => {
         setInfoMessage(null)
         if (err) logger.error('Join.login error', err)
