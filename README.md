@@ -7,7 +7,7 @@ Some projects may take this and add more features and create a component out of 
 
 And when changes/improvements are made to this project, they can be easilly updated in other projects.
 
-**Copyright 2021 EnCiv, Inc.** This work is licensed under the terms described in [LICENSE.txt](https://github.com/EnCiv/civil-server/blob/master/LICENSE.txt) which is an MIT license with a Public Good License Condition
+**Copyright 2021 EnCiv, Inc.** This work is licensed under the terms described in [LICENSE.txt](https://github.com/EnCiv/civil-server/blob/master/LICENSE.txt) which is an MIT license with a [Public Good License Condition](https://github.com/EnCiv/undebate#the-need-for-a-public-good-license-condition).
 
 # Features
 - **User Join/Login/Logout/Forgot Password**
