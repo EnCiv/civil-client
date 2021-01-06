@@ -36,7 +36,7 @@ async function start() {
   await server.start()
 }
 
-var server=new civicServer()
+var server=new civilServer()
 
 start()
 ```
