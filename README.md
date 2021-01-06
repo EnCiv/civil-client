@@ -29,12 +29,14 @@ _start.js_
 import civilServer from "civil-server"
 
 async function start() {
-  await civilServer.addSocketAPIsDirectory('./socketAPIs')
-  await civilServer.addRoutesDirectory('./router')
-  await civilServer.addEventsDirectory('./events')
-  await civilServer.addWebComponentsDirectory('./components/web-components')
-  await civilServer.start()
+  await server.addSocketAPIsDirectory('./socketAPIs')
+  await server.addRoutesDirectory('./router')
+  await server.addEventsDirectory('./events')
+  await server.addWebComponentsDirectory('./components/web-components')
+  await server.start()
 }
+
+var server=new civicServer()
 
 start()
 ```
