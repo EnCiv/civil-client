@@ -37,62 +37,35 @@ function isHostOnLan(hostname) {
   return false
 }
 
-class HttpServer extends EventEmitter {
-  sockets = {}
-
-  nextSocketId = 0
-
-  constructor(props) {
-    super()
-
-    this.props = props
-
+class HttpServer {
+  constructor() {
     this.setUserCookie = setUserCookie.bind(this) // user cookie needs this context so it doesn't have to lookup users in the DB every time
+    try {
+      this.app = express()
+      this.app.set('port', +(process.env.PORT || 3012))
+      this.app.use(compression())
+      this.app.use(helmet({ frameguard: false }))
+      this.app.use(helmet.hidePoweredBy({ setTo: 'Powered by Ruby on Rails.' }))
+      this.app.use(bodyParser.urlencoded({ extended: true }), bodyParser.json(), bodyParser.text())
+      this.app.use(cookieParser())
+      this.app.use('/assets/',
+        express.static('assets', {
+          maxAge: process.env.NODE_ENV === 'production' ? process.env.ASSETS_MAX_AGE || 1 * 24 * 60 * 60 * 1000 : 0,
+        })
+      ) // max-age in ms - 1 days these things only change through development
 
-    this.on('message', (...messages) => {
-      if (this.props.verbose) {
-        console.log('server.constructor', ...messages)
-      }
-    })
+      this.signers()
 
-      .on('request', printIt)
+      this.router()
 
-      .on('response', function (res) {
-        printIt(res.req, res)
-      })
+      this.notFound()
 
-    process.nextTick(() => {
-      try {
-        this.app = express()
+      this.error()
 
-        this.set()
-
-        this.parsers()
-
-        this.cookies()
-
-        this.signers()
-
-        this.cdn()
-
-        this.router()
-
-        this.notFound()
-
-        this.error()
-
-        this.start()
-      } catch (error) {
-        this.emit('error', error)
-      }
-    })
-  }
-
-  set() {
-    this.app.set('port', +(process.env.PORT || 3012))
-    this.app.use(compression())
-    this.app.use(helmet({ frameguard: false }))
-    this.app.use(helmet.hidePoweredBy({ setTo: 'Powered by Ruby on Rails.' }))
+      //this.start()
+    } catch (error) {
+      logger.error("server constructor error", error)
+    }
   }
 
   getBrowserConfig() {
@@ -117,14 +90,6 @@ class HttpServer extends EventEmitter {
     })
   }
 
-  parsers() {
-    this.app.use(bodyParser.urlencoded({ extended: true }), bodyParser.json(), bodyParser.text())
-  }
-
-  cookies() {
-    this.app.use(cookieParser())
-  }
-
   signers() {
     function sendUserId(req, res) {
       res.send({
@@ -141,7 +106,9 @@ class HttpServer extends EventEmitter {
     //will need trust proxy for production
     this.app.set('trust proxy', 'loopback')
 
-    this.app.post('/sign/in', apiLimiter, signInRoute, this.setUserCookie, sendUserId)
+    signInRoute.apply(this)
+
+    //this.app.post('/sign/in', apiLimiter, signInRoute, this.setUserCookie, sendUserId)
 
     this.app.all('/sign/up', signUpRoute, this.setUserCookie, sendUserId)
 
@@ -306,15 +273,6 @@ class HttpServer extends EventEmitter {
     )
   }
 
-  cdn() {
-    this.app.use(
-      '/assets/',
-      express.static('assets', {
-        maxAge: process.env.NODE_ENV === 'production' ? process.env.ASSETS_MAX_AGE || 1 * 24 * 60 * 60 * 1000 : 0,
-      })
-    ) // max-age in ms - 1 days these things only change through development
-  }
-
   notFound() {
     this.app.use((req, res, next) => {
       res.statusCode = 404
@@ -325,7 +283,7 @@ class HttpServer extends EventEmitter {
 
   error() {
     this.app.use((error, req, res, next) => {
-      this.emit('error', error)
+      logger.error('server caught error', error)
       res.statusCode = 500
       res.locals.error = error
       next()
@@ -333,23 +291,23 @@ class HttpServer extends EventEmitter {
   }
 
   start() {
-    this.server = http.createServer(this.app)
-    this.server.timeout = 3 * 60 * 1000
-
-    this.server.on('error', error => {
-      this.emit('error', error)
-    })
-
-    this.server.listen(this.app.get('port'), async () => {
-      logger.info('Server is listening', {
-        port: this.app.get('port'),
-        env: this.app.get('env'),
-      })
-
-      this.emit('listening', { port: this.app.get('port') })
-
-      this.socketAPI = new API(this)
-      this.socketAPI.start().then(() => console.info("SocketAPI started"))
+    return new Promise(async (ok, ko) => {
+      try {
+        this.server = http.createServer(this.app)
+        this.server.timeout = 3 * 60 * 1000
+        this.server.listen(process.env.PORT || 3012, async () => {
+          logger.info('Server is listening', {
+            port: this.app.get('port'),
+            env: this.app.get('env'),
+          })
+          this.socketAPI = new API(this)
+          await this.socketAPI.start()
+          console.info("SocketAPI started")
+          return ok()
+        })
+      } catch (error) {
+        console.error("Server caught error trying to start", error)
+      }
     })
   }
 

@@ -2,7 +2,6 @@
 
 'use strict'
 
-import { EventEmitter } from 'events'
 import Server from './server'
 
 import log4js from 'log4js'
@@ -32,28 +31,9 @@ if (!global.logger) {
 }
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-function start(emitter = false) {
-  logger.info({ emitter })
 
-  if (!emitter) {
-    emitter = new EventEmitter()
-    process.nextTick(() => {
-      asyncStart(emitter)
-    })
-    return emitter
-  }
-}
-
-async function asyncStart(emitter) {
+async function start() {
   try {
-    var verbose = false
-    if (process.env.NODE_ENV === 'production') {
-      process.title = 'synappprod'
-    } else {
-      process.title = 'synappdev'
-      verbose = true
-    }
-
     // heroku is going to delete the MONGODB_URI var on Nov10 - we need something else to use in the mean time
     const MONGODB_URI = process.env.PRIMARYDB_URI || process.env.MONGODB_URI
 
@@ -66,47 +46,15 @@ async function asyncStart(emitter) {
       await init()
     }
 
-    await new Promise((ok, ko) => {
-      try {
-        new Server(verbose)
-          .on('listening', status => {
-            logger.info('HTTP server is listening', { status })
-            return ok()
-          })
-          .on('error', error => {
-            emitter.emit(error)
-            ko()
-          })
-          .on('message', message => {
-            emitter.emit(message)
-            ok()
-          })
-      } catch (error) {
-        console.error('HTTP server caught error on start', error)
-        ko(error)
-      }
-    })
+    const server = new Server()
+    await server.start()
 
     require('./events/notify-of-new-participant') // no need to assign it to anything
 
-    emitter.emit.bind(emitter, 'message', 'started')
+    logger.info("started")
   } catch (error) {
-    emitter.emit('error', error)
+    logger.error('error on start', error)
   }
 }
 
-const file = process.argv[1]
-
-if (file === __filename || file === __filename.replace(/\.js$/, '')) {
-  start()
-    .on('message', (...messages) => console.log('start', ...messages))
-    .on('error', error => {
-      logger.error({ error })
-      console.log('Start: Error'.bgRed)
-      if (error && error.stack) {
-        console.log('start:', error.stack.red)
-      } else {
-        console.log('start:', error)
-      }
-    })
-}
+start()

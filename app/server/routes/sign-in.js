@@ -1,6 +1,8 @@
 'use strict'
 
 import User from '../../models/user'
+import expressRateLimit from 'express-rate-limit'
+import sendUserId from '../util/send-user-id'
 
 async function signIn(req, res, next) {
   try {
@@ -53,4 +55,13 @@ async function signIn(req, res, next) {
   }
 }
 
-export default signIn
+
+function route() {
+  const apiLimiter = expressRateLimit({
+    windowMs: 60 * 1000,
+    max: 2,
+    message: 'Too many attempts logging in, please try again after 24 hours.',
+  })
+  this.app.post('/sign/in', apiLimiter, signIn, this.setUserCookie, sendUserId)
+}
+export default route
