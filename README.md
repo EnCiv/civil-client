@@ -16,6 +16,10 @@ And when changes/improvements are made to this project, they can be easilly upda
 - **User Database in MongoDB**
 - **React Server Sider Rendering**
 - **React Progressive Web Applications**
+- **Asyncronous API's using socket.io**
+- **Server Events**
+- **Email Notifications**
+- **Security using Helmet**
 
 # How to use it
 
