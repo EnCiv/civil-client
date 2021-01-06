@@ -1,8 +1,8 @@
 'use strict'
 
-import User from '../../models/user'
+import User from '../models/user'
 import expressRateLimit from 'express-rate-limit'
-import sendUserId from '../util/send-user-id'
+import sendUserId from '../server/util/send-user-id'
 
 async function signIn(req, res, next) {
   try {

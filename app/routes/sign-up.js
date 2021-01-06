@@ -1,6 +1,7 @@
 'use strict'
 
-import User from '../../models/user'
+import User from '../models/user'
+import sendUserId from '../server/util/send-user-id'
 
 function signUp(req, res, next) {
   try {
@@ -36,4 +37,8 @@ function signUp(req, res, next) {
   }
 }
 
-export default signUp
+function route() {
+  this.app.post('/sign/up', signUp, this.setUserCookie, sendUserId)
+}
+
+export default route

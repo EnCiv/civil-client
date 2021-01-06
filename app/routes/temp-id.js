@@ -1,6 +1,7 @@
 'use strict'
 
-import User from '../../models/user'
+import User from '../models/user'
+import sendUserId from '../server/util/send-user-id'
 
 function tempId(req, res, next) {
   try {
@@ -36,4 +37,6 @@ function tempId(req, res, next) {
   }
 }
 
-export default tempId
+export default function route() {
+  this.app.all('/tempid', tempId, this.setUserCookie, sendUserId)
+}
