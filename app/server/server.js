@@ -57,7 +57,7 @@ class HttpServer extends EventEmitter {
 
       .on('request', printIt)
 
-      .on('response', function(res) {
+      .on('response', function (res) {
         printIt(res.req, res)
       })
 
@@ -264,13 +264,13 @@ class HttpServer extends EventEmitter {
     this.app.get('/doc/:mddoc', (req, res, next) => {
       fs.createReadStream(req.params.mddoc)
         .on('error', next)
-        .on('data', function(data) {
+        .on('data', function (data) {
           if (!this.data) {
             this.data = ''
           }
           this.data += data.toString()
         })
-        .on('end', function() {
+        .on('end', function () {
           res.header({ 'Content-Type': 'text/markdown; charset=UTF-8' })
           res.send(this.data)
         })
@@ -325,13 +325,9 @@ class HttpServer extends EventEmitter {
 
   error() {
     this.app.use((error, req, res, next) => {
-      // res.send('hello')
       this.emit('error', error)
-
       res.statusCode = 500
-
       res.locals.error = error
-
       next()
     }, serverReactRender)
   }
@@ -344,7 +340,7 @@ class HttpServer extends EventEmitter {
       this.emit('error', error)
     })
 
-    this.server.listen(this.app.get('port'), () => {
+    this.server.listen(this.app.get('port'), async () => {
       logger.info('Server is listening', {
         port: this.app.get('port'),
         env: this.app.get('env'),
@@ -353,22 +349,7 @@ class HttpServer extends EventEmitter {
       this.emit('listening', { port: this.app.get('port') })
 
       this.socketAPI = new API(this)
-        .on('error', error => this.emit('error', error))
-        .on('message', this.emit.bind(this, 'message'))
-    })
-
-    this.server.on('connection', socket => {
-      // Add a newly connected socket
-      const socketId = this.nextSocketId++
-      this.sockets[socketId] = socket
-
-      // Remove the socket when it closes
-      socket.on('close', () => {
-        delete this.sockets[socketId]
-      })
-
-      // Extend socket lifetime for demo purposes
-      // socket.setTimeout(4000);
+      this.socketAPI.start().then(() => console.info("SocketAPI started"))
     })
   }
 
@@ -376,11 +357,6 @@ class HttpServer extends EventEmitter {
     return new Promise((ok, ko) => {
       this.socketAPI.disconnect().then(() => {
         this.server.close(ok)
-
-        for (let socketId in this.sockets) {
-          logger.info('destroying socket', socketId)
-          this.sockets[socketId].destroy()
-        }
       }, ko)
     })
   }

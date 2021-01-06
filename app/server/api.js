@@ -1,13 +1,9 @@
 'use strict'
 
-import { EventEmitter } from 'events'
-import fs from 'fs'
 import path from 'path'
 import SocketIO from 'socket.io'
-
 import cookieParser from 'cookie-parser'
 import ss from 'socket.io-stream'
-import cloudinary from 'cloudinary'
 import User from '../models/user'
 
 import fetchHandlers from './util/fetch-handlers'
@@ -21,82 +17,57 @@ function handlerWrapper(handler, ...args) {
   }
 }
 
-class API extends EventEmitter {
+class API {
   constructor(server) {
-    super()
-
-    if (server) {
-      process.nextTick(() => {
-        try {
-          this.server = server
-          this.users = []
-          this.handlers = {}
-          this.sockets = []
-          fetchHandlers(path.resolve(__dirname, '../api'), this.handlers).then(() => this.start(), this.emit.bind(this, 'error'))
-        } catch (error) {
-          this.emit('error', error)
-        }
-      })
-    }
+    this.server = server
+    this.users = []
+    this.handlers = {}
+    this.sockets = []
   }
 
   disconnect() {
     return new Promise((ok, ko) => {
-      if (!this.sockets.length) {
-        return ok()
-      }
-
+      if (!this.sockets.length) return ok()
       const promises = this.sockets.map(
         socket =>
           new Promise((ok, ko) => {
-            if (!socket.connected) {
-              return ok()
-            }
-
+            if (!socket.connected) return ok()
             socket.on('disconnect', ok).disconnect(true)
           })
       )
-
-      Promise.all(promises).then(results => {
-        // this.io.close(closed => console.log('{ closed }'));
-        ok()
-      }, ko)
+      Promise.all(promises).then(ok, ko)
     })
   }
 
-
-
   start() {
-    try {
-      this.io = SocketIO.listen(this.server.server)
-      logger.info('socketIO listening')
-      this.io
-        .use(this.identify.bind(this))
-        .on('connection', this.connected.bind(this))
-        .on('connect_error', error => {
-          logger.error('socket io connection_error', error, this)
-        })
-        .on('connect_timeout', error => {
-          logger.error('socket io connection_timeout', error, this)
-        })
-    } catch (error) {
-      this.emit('error', error)
-    }
+    return new Promise(async (ok, ko) => {
+      try {
+        await fetchHandlers(path.resolve(__dirname, '../api'), this.handlers)
+        this.io = SocketIO.listen(this.server.server)
+        logger.info('socketIO listening')
+        this.io
+          .use(this.identify.bind(this))
+          .on('connection', this.connected.bind(this))
+          .on('connect_error', error => {
+            logger.error('socket io connection_error', error, this)
+          })
+          .on('connect_timeout', error => {
+            logger.error('socket io connection_timeout', error, this)
+          })
+      } catch (error) {
+        logger.error("API start caught error", error)
+      }
+    })
   }
 
   async validateUserCookie(cookie, ok, ko) {
-    var usr = this.users.reduce((found, user) => {
-      if (user.id === cookie.id) {
-        found = user
-      }
-      return found
-    }, null)
-    if (usr) return ok()
+    if (this.users.some(user => user.id === cookie.id))
+      return ok()
     else {
-      usr = await User.findOne({ _id: User.ObjectID(cookie.id) })
+      let usr = await User.findOne({ _id: User.ObjectID(cookie.id) })
       if (!usr) {
         logger.error(`API:validateUserCookie id ${cookie.id} not found in this server/db`)
-        if (ko) ko()
+        if (ko) return ko()
       } else {
         this.users.push(cookie)
         return ok()
@@ -137,7 +108,7 @@ class API extends EventEmitter {
         )
       } else next()
     } catch (error) {
-      this.emit('error', error)
+      logger.info("API.identify caught error", error)
     }
   }
 
@@ -149,94 +120,32 @@ class API extends EventEmitter {
     try {
       this.sockets.push(socket)
 
-      socket.on('error', error => {
-        console.error('socket got error event')
-        this.emit('error', error)
-      })
+      socket.on('error', error => logger.error('API.connected socket got error event', error))
       socket.on('connect_timeout', error => logger.error('socket connected timeout', error))
       socket.on('connect_error', error => logger.error('socket connect_error', error))
-
       socket.on('disconnect', () => { })
-
       socket.emit('welcome', socket.synuser)
-
       socket.broadcast.emit('online users', this.users.length)
       socket.emit('online users', this.users.length)
       logger.trace('socket connected', { id: socket.id, synuser: socket.synuser, onlineUsers: this.users.length })
 
       socket.ok = (event, ...responses) => {
-        const formatted = responses.map(res => {
-          let stringified = JSON.stringify(res)
-
-          if (typeof stringified === 'undefined') {
-            return 'undefined'.magenta
-          }
-
-          return stringified.magenta
-        })
-
-        // this.emit('message', '>>>'.green.bold, event.green.bold, ...formatted);
         logger.trace('api: connected: socket.ok ', event, ...responses)
         socket.emit('OK ' + event, ...responses)
       }
 
       socket.error = error => {
-        this.emit('error', error)
+        logger.error('api connected socket.error caught error', error)
       }
 
       for (let handler in this.handlers) {
-        socket.on(handler, handlerWrapper.bind(socket, this.handlers[handler]))
+        if (handler.startsWith('stream')) // handlers that use streams need to start with 'stream' and they are wrapped differently to work
+          ss(socket.on(handler, this.handlers[handler]))
+        else
+          socket.on(handler, handlerWrapper.bind(socket, this.handlers[handler]))
       }
-
-      this.stream(socket)
     } catch (error) {
-      this.emit('error', error)
-    }
-  }
-
-  stream(socket) {
-    try {
-      ss(socket).on('upload image', (stream, data) => {
-        const filename = '/tmp/' + data.name
-        logger.info('upload image', { stream }, { data }, { filename })
-        stream.pipe(fs.createWriteStream(filename)).on('error', err => {
-          logger.error('Error uploading file:', filename, err)
-        })
-      })
-      ss(socket).on('upload video', (stream, data, cb) => {
-        const public_id = data.name.split('.')[0]
-
-        var cloudStream = cloudinary.v2.uploader.upload_stream(
-          {
-            resource_type: 'video',
-            public_id,
-            eager_async: true,
-            eager: [
-              { quality: 'auto:good', format: 'mp4' },
-              { start_offset: 0, format: 'png' },
-            ],
-          },
-          (err, result) => {
-            // you can't set the timeout:120000 option in the first paramater - it gets an error 504
-            if (err) {
-              logger.error('upload video cloudinary.uploader.upload_stream error:', err, data)
-              cb()
-            } else {
-              cb(result.secure_url)
-            }
-          }
-        )
-        stream.pipe(cloudStream).on('error', err => {
-          logger.error('Error uploading stream:', filename, err)
-          cb()
-        })
-        cloudStream.on('error', err => {
-          console.info('cloudStream error:', err)
-          cb()
-        })
-      })
-    } catch (error) {
-      this.emit('error', error)
+      logger.error("api.connected caughet error", error)
     }
   }
 }
