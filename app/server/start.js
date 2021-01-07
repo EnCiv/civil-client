@@ -7,7 +7,6 @@ import Server from './server'
 import log4js from 'log4js'
 import MongoModels from 'mongo-models'
 import mongologger from './util/mongo-logger'
-import fetchHandlers from './util/fetch-handlers'
 import path from 'path'
 
 log4js.configure({
@@ -36,23 +35,20 @@ if (!global.logger) {
 
 async function start() {
   try {
-    let routeHandlers = {}
 
     // heroku is going to delete the MONGODB_URI var on Nov10 - we need something else to use in the mean time
     const MONGODB_URI = process.env.PRIMARYDB_URI || process.env.MONGODB_URI
-
-    if (!MONGODB_URI) {
+    if (!MONGODB_URI)
       throw new Error('Missing PRIMARYDB_URI or MONGODB_URI')
-    }
-    await MongoModels.connect({ uri: MONGODB_URI }, {})
+    await MongoModels.connect({ uri: MONGODB_URI }, { useUnifiedTopology: true })
     // any models that need to createIndexes will push their init function
     for await (const init of MongoModels.toInit) {
       await init()
     }
 
-    await fetchHandlers(path.resolve(__dirname, '../routes'), routeHandlers)
-
-    const server = new Server(routeHandlers)
+    const server = new Server()
+    await server.addRoutesDirectory(path.resolve(__dirname, '../routes'))
+    await server.addSocketAPIsDirectory(path.resolve(__dirname, '../api'))
     await server.start()
 
     require('./events/notify-of-new-participant') // no need to assign it to anything

@@ -1,6 +1,5 @@
 'use strict'
 
-import path from 'path'
 import SocketIO from 'socket.io'
 import cookieParser from 'cookie-parser'
 import ss from 'socket.io-stream'
@@ -9,20 +8,33 @@ import User from '../models/user'
 import fetchHandlers from './util/fetch-handlers'
 
 // this is not catching the errors from hartford-address-lookup when there is not MAPS Api set - but still maybe it will catch some other error
-function handlerWrapper(handler, ...args) {
+function handlerWrapper(handler, handle, ...args) {
   try {
     handler.apply(this, args)
   } catch (error) {
-    logger.error('caught error from api handler', handler.name, error.message, 'continuing', error)
+    logger.error('caught error from api handler', handle, error.message, 'continuing', error)
   }
 }
 
 class API {
-  constructor(server) {
-    this.server = server
+  constructor() {
     this.users = []
     this.handlers = {}
     this.sockets = []
+  }
+
+  //path.resolve(__dirname, '../api')
+  addDirectory(dirPath) {
+    return new Promise(async (ok, ko) => {
+      try {
+        await fetchHandlers(dirPath, this.handlers)
+        return ok()
+      }
+      catch (error) {
+        logger.error("api.addSocckeAPIsDirectory caught error:", error)
+        ko(error)
+      }
+    })
   }
 
   disconnect() {
@@ -39,11 +51,10 @@ class API {
     })
   }
 
-  start() {
+  start(server) {
     return new Promise(async (ok, ko) => {
       try {
-        await fetchHandlers(path.resolve(__dirname, '../api'), this.handlers)
-        this.io = SocketIO.listen(this.server.server)
+        this.io = SocketIO.listen(server)
         logger.info('socketIO listening')
         this.io
           .use(this.identify.bind(this))
@@ -138,11 +149,11 @@ class API {
         logger.error('api connected socket.error caught error', error)
       }
 
-      for (let handler in this.handlers) {
-        if (handler.startsWith('stream')) // handlers that use streams need to start with 'stream' and they are wrapped differently to work
-          ss(socket.on(handler, this.handlers[handler]))
+      for (let handle in this.handlers) {
+        if (handle.startsWith('stream')) // handlers that use streams need to start with 'stream' and they are wrapped differently to work
+          ss(socket.on(handle, handlerWrapper.bind(socket, this.handlers[handle], handle)))
         else
-          socket.on(handler, handlerWrapper.bind(socket, this.handlers[handler]))
+          socket.on(handle, handlerWrapper.bind(socket, this.handlers[handle], handle))
       }
     } catch (error) {
       logger.error("api.connected caughet error", error)
