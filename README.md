@@ -2,6 +2,8 @@
 
 This is a node server, as a component that can be included in other projects and extended for use by other projects.  It is spun out from the [undebate](https://github.com/EnCiv/undebate) project so that it can be used as a common component of many projects.
 
+Demo at https://civil-server.herokuapp.com
+
 The idea is that Civil Server is a component with some basic funcationality that will be useful to a lot of projects.
 Some projects may take this and add more features and create a component out of that will be useful to other projects.
 
@@ -10,16 +12,19 @@ And when changes/improvements are made to this project, they can be easilly upda
 **Copyright 2021 EnCiv, Inc.** This work is licensed under the terms described in [LICENSE.txt](https://github.com/EnCiv/civil-server/blob/master/LICENSE.txt) which is an MIT license with a [Public Good License Condition](https://github.com/EnCiv/undebate#the-need-for-a-public-good-license-condition).
 
 # Features
-- **User Join/Login/Logout/Forgot Password**
-- **Logging to a collection in MongoDB**
-- **Browser side logging for debugging**
-- **User Database in MongoDB**
-- **React Server Sider Rendering**
-- **React Progressive Web Applications**
-- **Asyncronous API's using socket.io**
-- **Server Events**
-- **Email Notifications**
-- **Security using Helmet**
+- **User Join/Login/Logout/Forgot Password** to get you up and running quickly with user logins
+- **MongoDB** for extensible user database
+- **React Server Sider Rendering** for quick page loads
+- **React Progressive Web Applications** for interactive pages with low server load
+- **Socket.io** for asyncronous, bidirectional API's
+- **Server Events** for extensibility
+- **Nodemon** for email notifications
+- **Send In Blue** for templated transactional email
+- **Helmet** for improved security
+- **Webpack and nodemon** for interactive development
+- **Log4js** for logging to a collection in MongoDB
+- **Log4js from the browser** for debugging
+- **Loader.io verification** for load testing
 
 # How to use it
 

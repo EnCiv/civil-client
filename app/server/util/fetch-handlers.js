@@ -10,6 +10,7 @@ export default function fetchHandlers(dirPath, handlers) {
             })
             const filePath = dirPath[dirPath.length - 1] === '/' ? dirPath : dirPath + '/'
             console.info("filePath", filePath)
+            filenames.sort((a, b) => a < b ? -1 : a > b ? 1 : 0) // sort from a to z
             filenames.forEach(file => {
                 try {
                     if (file === 'index.js') return // skip index files
