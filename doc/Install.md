@@ -30,13 +30,17 @@ Heroku calls them 'apps' but think of it as a server instance in the cloud with 
 
     heroku create undebate-something-unique
 
-Then we add the MongoDB database. It's also in cloud. You will be able to use this one database when you are running locally, and when you are running in the cloud.
-
-    heroku addons:create mongolab:sandbox -a undebate-something-unique
+Then we add the MongoDB database. It's also in cloud. You will be able to use this one database when you are running locally, and when you are running in the cloud. Follow the instructions in this slide show:
+    https://docs.google.com/presentation/d/10fEk_OdfN-dYh9PlqG6nTFlu4ENvis_owdHbqWYDpBI/present?slide=id.gb4a0dbf10b_0_93
 
 Now lets get the environment variable with the URI for that database and store it in your bash configuration file so you can use it when you run locally. This string has a password in it and it should never be shared or commited to a repo. The .gitignore file ignores .bashrc so it won't get added into a repo - just make sure it stays that way.
-
-    echo "export MONGODB_URI="\"`heroku config:get MONGODB_URI -a undebate-something-unique`\" >> .bashrc
+```
+    echo 'export MONGODB_URI="mongodb+srv://any-name-you-want:Znkx8UyAZAV15xRK@cluster0.xtpzi.mongodb.net/anydbname?retryWrites=true&w=majority"' >> .bashrc
+```
+Now lets add the MONGODB_URI to the heroku server: 
+```
+    heroku config:set MONGODB_URI="mongodb+srv://any-name-you-want:Znkx8UyAZAV15xRK@cluster0.xtpzi.mongodb.net/anydbname?retryWrites=true&w=majority"
+```
 
 Now we will add Cloudinary - a Content Delivery Network that has image and video manipulation features. A CDN gives you a place to store these things, and deliver them quickly over the internet. Your node server would be slower, and doesn't keep the files after the server restarts. In the text that follows, replace [something unique] with some name that you come up with, including the []'s for example undebate-banana
 

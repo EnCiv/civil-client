@@ -3,56 +3,17 @@
 'use strict'
 
 import Server from './server'
-
-import log4js from 'log4js'
-import MongoModels from 'mongo-models'
-import mongologger from './util/mongo-logger'
 import path from 'path'
 
-log4js.configure({
-  appenders: {
-    browserMongoAppender: { type: mongologger, source: 'browser' },
-    err: { type: 'stderr' },
-    nodeMongoAppender: { type: mongologger, source: 'node' },
-  },
-  categories: {
-    browser: { appenders: ['err', 'browserMongoAppender'], level: 'debug' },
-    node: { appenders: ['err', 'nodeMongoAppender'], level: 'debug' },
-    default: { appenders: ['err'], level: 'debug' },
-  },
-})
-
-if (!global.bslogger) {
-  // bslogger stands for browser socket logger - not BS logger.
-  global.bslogger = log4js.getLogger('browser')
-}
-
-if (!global.logger) {
-  global.logger = log4js.getLogger('node')
-}
-
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
 async function start() {
   try {
-
-    // heroku is going to delete the MONGODB_URI var on Nov10 - we need something else to use in the mean time
-    const MONGODB_URI = process.env.PRIMARYDB_URI || process.env.MONGODB_URI
-    if (!MONGODB_URI)
-      throw new Error('Missing PRIMARYDB_URI or MONGODB_URI')
-    await MongoModels.connect({ uri: MONGODB_URI }, { useUnifiedTopology: true })
-    // any models that need to createIndexes will push their init function
-    for await (const init of MongoModels.toInit) {
-      await init()
-    }
-
     const server = new Server()
+    await server.earlyStart()
     await server.addRoutesDirectory(path.resolve(__dirname, '../routes'))
     await server.addSocketAPIsDirectory(path.resolve(__dirname, '../api'))
+    server.addEventsDirectory(path.resolve(__dirname, '../events')) // don't await this on
     await server.start()
-
-    require('./events/notify-of-new-participant') // no need to assign it to anything
-
     logger.info("started")
   } catch (error) {
     logger.error('error on start', error)

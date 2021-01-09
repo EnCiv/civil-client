@@ -6,17 +6,44 @@ import bodyParser from 'body-parser'
 import cookieParser from 'cookie-parser'
 import helmet from 'helmet'
 import compression from 'compression'
-import API from './api'
+import SocketAPI from './socket-api'
 import setUserCookie from './routes/set-user-cookie'
 import serverReactRender from './routes/server-react-render'
 import fetchHandlers from './util/fetch-handlers'
+import serverEvents from './server-events'
+import log4js from 'log4js'
+import MongoModels from 'mongo-models'
+import mongologger from './util/mongo-logger'
+
 
 class HttpServer {
   constructor() {
+    log4js.configure({
+      appenders: {
+        browserMongoAppender: { type: mongologger, source: 'browser' },
+        err: { type: 'stderr' },
+        nodeMongoAppender: { type: mongologger, source: 'node' },
+      },
+      categories: {
+        browser: { appenders: ['err', 'browserMongoAppender'], level: 'debug' },
+        node: { appenders: ['err', 'nodeMongoAppender'], level: 'debug' },
+        default: { appenders: ['err'], level: 'debug' },
+      },
+    })
+
+    if (!global.bslogger) {
+      // bslogger stands for browser socket logger - not BS logger.
+      global.bslogger = log4js.getLogger('browser')
+    }
+
+    if (!global.logger) {
+      global.logger = log4js.getLogger('node')
+    }
     this.routeHandlers = {}
     this.setUserCookie = setUserCookie.bind(this) // user cookie needs this context so it doesn't have to lookup users in the DB every time
-    this.socketAPI = new API()
+    this.socketAPI = new SocketAPI()
     this.addSocketAPIsDirectory = this.socketAPI.addDirectory.bind(this.socketAPI)
+    this.addEventsDirectory = serverEvents.addDirectory
   }
 
   addRoutesDirectory(dirPath) {
@@ -42,6 +69,20 @@ class HttpServer {
     }
   }
 
+  earlyStart() {
+    return new Promise(async (ok, ko) => {
+      // heroku is going to delete the MONGODB_URI var on Nov10 - we need something else to use in the mean time
+      const MONGODB_URI = process.env.PRIMARYDB_URI || process.env.MONGODB_URI
+      if (!MONGODB_URI)
+        ko(new Error('Missing PRIMARYDB_URI or MONGODB_URI'))
+      await MongoModels.connect({ uri: MONGODB_URI }, { useUnifiedTopology: true })
+      // any models that need to createIndexes will push their init function
+      for await (const init of MongoModels.toInit) {
+        await init()
+      }
+      return ok()
+    })
+  }
   // a minute after a request has been received, check and see if the response has been sent.
   timeout() {
     this.app.use((req, res, next) => {
@@ -100,6 +141,7 @@ class HttpServer {
           })
           await this.socketAPI.start(this.server)
           console.info("SocketAPI started")
+          await serverEvents.start()
           return ok()
         })
       } catch (error) {
