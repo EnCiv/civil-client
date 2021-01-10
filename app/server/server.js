@@ -15,30 +15,27 @@ import log4js from 'log4js'
 import MongoModels from 'mongo-models'
 import mongologger from './util/mongo-logger'
 
+if (!global.logger) {
+  log4js.configure({
+    appenders: {
+      browserMongoAppender: { type: mongologger, source: 'browser' },
+      err: { type: 'stderr' },
+      nodeMongoAppender: { type: mongologger, source: 'node' },
+    },
+    categories: {
+      browser: { appenders: ['err', 'browserMongoAppender'], level: 'debug' },
+      node: { appenders: ['err', 'nodeMongoAppender'], level: 'debug' },
+      default: { appenders: ['err'], level: 'debug' },
+    },
+  })
+
+  // bslogger stands for browser socket logger - not BS logger.
+  global.bslogger = log4js.getLogger('browser')
+  global.logger = log4js.getLogger('node')
+}
 
 class HttpServer {
   constructor() {
-    log4js.configure({
-      appenders: {
-        browserMongoAppender: { type: mongologger, source: 'browser' },
-        err: { type: 'stderr' },
-        nodeMongoAppender: { type: mongologger, source: 'node' },
-      },
-      categories: {
-        browser: { appenders: ['err', 'browserMongoAppender'], level: 'debug' },
-        node: { appenders: ['err', 'nodeMongoAppender'], level: 'debug' },
-        default: { appenders: ['err'], level: 'debug' },
-      },
-    })
-
-    if (!global.bslogger) {
-      // bslogger stands for browser socket logger - not BS logger.
-      global.bslogger = log4js.getLogger('browser')
-    }
-
-    if (!global.logger) {
-      global.logger = log4js.getLogger('node')
-    }
     this.routeHandlers = {}
     this.setUserCookie = setUserCookie.bind(this) // user cookie needs this context so it doesn't have to lookup users in the DB every time
     this.socketAPI = new SocketAPI()
