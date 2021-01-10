@@ -2,7 +2,7 @@
   "name": "undebate",
   "version": "0.0.0",
   "description": "Not debates, but a place where voters can get to know their candidates",
-  "main": "dist/server/start.js",
+  "main": "dist/index.js",
   "scripts": {
     "start": "node --max_old_space_size=460 dist/server/start.js",
     "test": "jest",
