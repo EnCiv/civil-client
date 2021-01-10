@@ -12,7 +12,7 @@ const env = process.env.NODE_ENV || 'development'
 if (env !== 'development') console.error('NODE_ENV is', env, "but needs to be 'development' when the server runs")
 
 module.exports = {
-  context: path.resolve(__dirname, 'dist'), // using dist because using app failed to load when built as a component of another project
+  context: path.resolve(__dirname, 'app'),
   mode: 'development',
   watch: true,
   devtool: 'source-map',

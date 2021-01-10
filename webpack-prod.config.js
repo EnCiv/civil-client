@@ -3,7 +3,7 @@ const webpack = require('webpack')
 
 module.exports = {
   mode: 'production',
-  context: path.resolve(__dirname, 'app'),
+  context: path.resolve(__dirname, 'dist'), // dist because app failed when building this as a node_module in another component
   entry: {
     main: './client/main.js',
   },
