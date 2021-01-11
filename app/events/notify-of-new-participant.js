@@ -1,14 +1,14 @@
 'use strict'
 
-import Iota from '../../models/iota'
-import serverEvents from '../server-events.js'
+import Iota from '../models/iota'
+import serverEvents from '../server/server-events.js'
 
-import sendEmail from '../util/send-email'
-import Config from '../../../public.json'
+import sendEmail from '../server/util/send-email'
+import Config from '../../public.json'
 
 var SibApiV3Sdk = require('sib-api-v3-sdk')
 
-serverEvents.eNameAdd(ParticipantCreated)
+serverEvents.eNameAdd('ParticipantCreated') // shouldn't be here but it's here for dev
 
 async function notifyOfNewParticipant(iota) {
   const viewer = await Iota.findOne({ _id: Iota.ObjectID(iota.parentId) })

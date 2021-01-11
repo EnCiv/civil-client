@@ -34,10 +34,12 @@ _start.js_
 import civilServer from "civil-server"
 
 async function start() {
-  await server.addSocketAPIsDirectory('./socketAPIs')
-  await server.addRoutesDirectory('./router')
-  await server.addEventsDirectory('./events')
-  await server.addWebComponentsDirectory('./components/web-components')
+  await server.earlyStart()
+  server.routesDirPaths.push()
+  server.routesDirPaths.push(path.resolve(__dirname, '../routes'))
+  server.serverEventsDirPaths.push(path.resolve(__dirname, '../events'))
+  server.socketAPIsDirPaths.push(path.resolve(__dirname, '../socket-apis'))
+  server.webComponentsDirPaths.push(path.resolve(__dirname, '../web-components'))
   await server.start()
 }
 

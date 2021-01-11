@@ -14,6 +14,7 @@ import serverEvents from './server-events'
 import log4js from 'log4js'
 import MongoModels from 'mongo-models'
 import mongologger from './util/mongo-logger'
+import path from 'path'
 
 if (!global.logger) {
   log4js.configure({
@@ -37,10 +38,11 @@ if (!global.logger) {
 class HttpServer {
   constructor() {
     this.routeHandlers = {}
+    this.routesDirPaths = [path.resolve(__dirname, '../routes')]
+    this.serverEventsDirPaths = [path.resolve(__dirname, '../events')]
+    this.socketAPIsDirPaths = [path.resolve(__dirname, '../api')]
     this.setUserCookie = setUserCookie.bind(this) // user cookie needs this context so it doesn't have to lookup users in the DB every time
     this.socketAPI = new SocketAPI()
-    this.addSocketAPIsDirectory = this.socketAPI.addDirectory.bind(this.socketAPI)
-    this.addEventsDirectory = serverEvents.addDirectory
   }
 
   addRoutesDirectory(dirPath) {
@@ -113,6 +115,9 @@ class HttpServer {
   start() {
     return new Promise(async (ok, ko) => {
       try {
+        await this.addRoutesDirectory(this.routesDirPaths)
+        await this.socketAPI.addDirectory(this.socketAPIsDirPaths)
+        await serverEvents.addDirectory(this.serverEventsDirPaths)
         this.app = express()
         this.app.set('port', +(process.env.PORT || 3012))
         this.app.use(compression())

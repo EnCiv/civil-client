@@ -31,7 +31,7 @@ class API {
         return ok()
       }
       catch (error) {
-        logger.error("api.addSocckeAPIsDirectory caught error:", error)
+        logger.error("api.addSockeAPIsDirtectory caught error:", error)
         ko(error)
       }
     })
