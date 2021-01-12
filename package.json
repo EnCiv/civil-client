@@ -1,7 +1,7 @@
 {
-  "name": "undebate",
+  "name": "civil-server",
   "version": "0.0.0",
-  "description": "Not debates, but a place where voters can get to know their candidates",
+  "description": "an exctensible server component that can be part of other civic tech projects",
   "main": "dist/server/server.js",
   "scripts": {
     "start": "node --max_old_space_size=460 dist/server/start.js",
@@ -23,15 +23,16 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Synaccord/undebate.git"
+    "url": "git+https://github.com/EnCiv/civil-server.git"
   },
   "author": "David Fridley",
   "license": "SEE LICENSE IN LICENSE.txt",
   "bugs": {
-    "url": "https://github.com/Synaccord/undebate/issues"
+    "url": "https://github.com/EnCiv/civil-server/issues"
   },
-  "homepage": "https://github.com/Synaccord/undebate#readme",
+  "homepage": "https://github.com/EnCiv/civil-server#readme",
   "devDependencies": {
+    "@babel/cli": "^7.8.4",
     "concurrently": "^5.3.0",
     "cypress": "^6.2.1",
     "enzyme": "^3.11.0",
@@ -44,7 +45,6 @@
     "pretty-quick": "^2.0.1"
   },
   "dependencies": {
-    "@babel/cli": "^7.8.4",
     "@babel/core": "^7.8.4",
     "@babel/preset-env": "^7.8.4",
     "@babel/preset-react": "^7.8.3",
