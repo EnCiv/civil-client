@@ -5,7 +5,6 @@ import 'regenerator-runtime/runtime'
 
 import React from 'react'
 import ReactDOM from 'react-dom'
-import App from '../components/app'
 import bconsole from './bconsole'
 import socketlogger from './socketlogger'
 
@@ -31,12 +30,6 @@ if (
     // Chrome requires returnValue to be set
     e.returnValue = ''
     window.socket.disconnect(true) // disconnect the socket so we don't see fewer connection timeouts on the server
-  })
-  window.socket.on('welcome', user => {
-    /*if ( ! user ) {
-        new Facebook().on('ready', () => Facebook.connect(false));
-      }*/
-    render(Object.assign({}, reactProps, { user }))
   })
 } else {
   window.NoSocket = true
@@ -91,21 +84,24 @@ if (!window.language) {
   window.language = navigator.language.slice(0, 2)
 }
 
-function render(props) {
-  try {
-    window.reactContainer = document.getElementById('synapp')
-    if (!window.Synapp) window.Synapp = {}
-    window.Synapp.fontSize = parseFloat(
-      window.getComputedStyle(window.reactContainer, null).getPropertyValue('font-size')
-    )
-    ReactDOM.render(<App {...props} />, window.reactContainer)
-  } catch (error) {
-    document.getElementsByTagName('body')[0].style.backgroundColor = 'red'
-    logger.error('render Error', error)
+export default function clientMain(App, props) {
+  function render(App, props) {
+    try {
+      window.reactContainer = document.getElementById('synapp')
+      if (!window.Synapp) window.Synapp = {}
+      window.Synapp.fontSize = parseFloat(
+        window.getComputedStyle(window.reactContainer, null).getPropertyValue('font-size')
+      )
+      ReactDOM.render(<App {...props} />, window.reactContainer)
+    } catch (error) {
+      document.getElementsByTagName('body')[0].style.backgroundColor = 'red'
+      logger.error('render Error', error)
+    }
   }
-}
+  window.socket.on('welcome', user => {
+    render(App, Object.assign({}, reactProps, { user }))
+  })
 
-function hydrate(props) {
   try {
     if (!(window.reactContainer = document.getElementById('synapp'))) logger.error('synapp id not found')
 
@@ -120,4 +116,6 @@ function hydrate(props) {
   }
 }
 
-hydrate(reactProps)
+
+
+
