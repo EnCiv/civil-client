@@ -65,5 +65,5 @@ function indexHandlers(dstPath, dirPaths) {
 }
 let dirPaths = []
 for (let i = 2; i < process.argv.length; i++)
-    dirPaths.push(argv[i])
+    dirPaths.push(process.argv[i])
 indexHandlers(process.argv[2], dirPaths)
