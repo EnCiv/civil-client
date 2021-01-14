@@ -2,7 +2,7 @@
   "name": "civil-server",
   "version": "0.0.0",
   "description": "an exctensible server component that can be part of other civic tech projects",
-  "main": "dist/server/server.js",
+  "main": "dist/index.js",
   "scripts": {
     "start": "node --max_old_space_size=460 dist/server/start.js",
     "test": "jest",

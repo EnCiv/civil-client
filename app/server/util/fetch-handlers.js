@@ -1,6 +1,6 @@
 import fs from 'fs'
 
-export default function fetchHandlers(dirPaths, handlers) {
+export default function fetchHandlers(dirPaths, handlers, type = 'function') {
     console.info("dirPath", dirPaths)
     return new Promise(async (ok, ko) => {
         try {
@@ -23,8 +23,8 @@ export default function fetchHandlers(dirPaths, handlers) {
                             if (name !== name.toLowerCase())
                                 throw new Error("fetchHandlers found non lowercase name:", name)
                             const handler = require(filePath + file).default
-                            if (typeof handler !== 'function') {
-                                throw new Error(`fetchHandlers ${name} (${file}) is not a function`)
+                            if (typeof handler !== type) {
+                                throw new Error(`fetchHandlers ${name} (${file}) is not a ${type}`)
                             }
                             if (handlers[name]) logger.warn("fetchHandlers: handler", name, "is being replaced from directory", dirPath)
                             handlers[name] = handler

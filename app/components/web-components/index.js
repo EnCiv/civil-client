@@ -1,55 +1,9 @@
-'use strict'
-// @create-index
-// imagine one day a program that automatically generates this
-// until that day, this is manual
-//
-// TypeComponent will accept a function (.default) or a module (exports), so you don't need to add .default to new entries.
-// Also, TypeComponent.attributes() will return module.attributes if it is defined.
-
-const WebComponents = {
-  Join: require('./join'),
+'use strict';
+// everything between the {} below will be replaced by index-handlers
+// and make sure there are no nested {} within it
+const Components={
+	 'Join':	require('./join'),
 }
 
-import React from 'react'
+module.exports.Components = Components
 
-class WebComponent extends React.Component {
-  static attributes(webComponent) {
-    let WebComponent
-    if (typeof webComponent === 'object') {
-      WebComponent = WebComponents[webComponent.webComponent]
-      if (typeof WebComponent === 'object') return WebComponent.attributes
-      else return {}
-    } else {
-      WebComponent = WebComponents[webComponent]
-      if (typeof WebComponent === 'object') return WebComponent.attributes
-      else return {}
-    }
-  }
-  render() {
-    const objOrStr = this.props.webComponent
-    var WebComponentClass
-    var newProps = {}
-
-    if (typeof objOrStr === 'object') {
-      Object.assign(newProps, this.props, objOrStr)
-      WebComponentClass = WebComponents[objOrStr.webComponent]
-    } else {
-      // string
-      Object.assign(newProps, this.props)
-      WebComponentClass = WebComponents[objOrStr]
-    }
-    if (typeof WebComponentClass === 'undefined') {
-      logger.error('WebComponent not defined:', objOrStr)
-      return null
-    }
-    if (WebComponentClass.default)
-      // commonJS module or require
-      WebComponentClass = WebComponentClass.default
-
-    delete newProps.webComponent
-
-    return <WebComponentClass {...newProps} />
-  }
-}
-
-export default WebComponent

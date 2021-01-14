@@ -35,7 +35,6 @@ import civilServer from "civil-server"
 
 async function start() {
   await server.earlyStart()
-  server.routesDirPaths.push()
   server.routesDirPaths.push(path.resolve(__dirname, '../routes'))
   server.serverEventsDirPaths.push(path.resolve(__dirname, '../events'))
   server.socketAPIsDirPaths.push(path.resolve(__dirname, '../socket-apis'))

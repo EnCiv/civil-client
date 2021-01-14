@@ -15,6 +15,7 @@ import log4js from 'log4js'
 import MongoModels from 'mongo-models'
 import mongologger from './util/mongo-logger'
 import path from 'path'
+import WebComponent from '../components/web-component'
 
 if (!global.logger) {
   log4js.configure({
@@ -41,6 +42,7 @@ class HttpServer {
     this.routesDirPaths = [path.resolve(__dirname, '../routes')]
     this.serverEventsDirPaths = [path.resolve(__dirname, '../events')]
     this.socketAPIsDirPaths = [path.resolve(__dirname, '../api')]
+    this.webComponentDirPaths = [path.resolve(__dirname, '../components/web-components')]
     this.setUserCookie = setUserCookie.bind(this) // user cookie needs this context so it doesn't have to lookup users in the DB every time
     this.socketAPI = new SocketAPI()
   }
@@ -118,6 +120,7 @@ class HttpServer {
         await this.addRoutesDirectory(this.routesDirPaths)
         await this.socketAPI.addDirectory(this.socketAPIsDirPaths)
         await serverEvents.addDirectory(this.serverEventsDirPaths)
+        await WebComponent.addDirectories(this.webComponentDirPaths)
         this.app = express()
         this.app.set('port', +(process.env.PORT || 3012))
         this.app.use(compression())

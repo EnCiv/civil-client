@@ -2,7 +2,7 @@
 
 import React from 'react'
 import { hot } from 'react-hot-loader'
-import WebComponent from '../components/web-components'
+import WebComponent from './web-component'
 import Footer from './footer'
 import ErrorBoundary from './error-boundary'
 
