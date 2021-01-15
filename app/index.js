@@ -2,9 +2,10 @@
 
 import civilServer from './server/server.js'
 import clientMain from './client/main'
-import WebComponent from './components/web-component'
+import WebComponents from './components/web-components'
 import serverEvents from './server/server-events'
+import ErrorBoundry from './components/error-boundary'
 
 
 export default civilServer
-export { serverEvents, WebComponent, clientMain, civilServer }
+export { serverEvents, WebComponents, clientMain, civilServer, ErrorBoundry }

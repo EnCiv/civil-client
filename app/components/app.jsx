@@ -2,7 +2,7 @@
 
 import React from 'react'
 import { hot } from 'react-hot-loader'
-import WebComponent from './web-component'
+import WebComponents from './web-components'
 import Footer from './footer'
 import ErrorBoundary from './error-boundary'
 
@@ -14,7 +14,7 @@ class App extends React.Component {
       return (
         <ErrorBoundary>
           <div style={{ position: 'relative' }}>
-            <WebComponent key="web-component" webComponent={this.props.iota.webComponent} {...newProps} />
+            <WebComponents key="web-component" webComponent={this.props.iota.webComponent} {...newProps} />
             <Footer key="footer" />
           </div>
         </ErrorBoundary>

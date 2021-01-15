@@ -14,6 +14,10 @@ mkdir -p /tmp
 mkdir -p ./assets/js
 pwd
 cp ./node_modules/socket.io-stream/socket.io-stream.js ./assets/js/
+#
+# create the WebComponents index files
+#
+node dist/tools/react-directory-indexer.js app/components/web-components/
 
 
 echo '*************************************************************************'
