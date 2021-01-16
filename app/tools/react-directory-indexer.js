@@ -55,7 +55,7 @@ function reactDirectoryIndexer(dstPath, dirPaths) {
             // now we creat the list of Components
             outString += "const Components={\n"
             for (const [handle, handler] of Object.entries(handlers)) {
-                outString += `\t '${reactCase(handle)}':\trequire('./${path.relative(dstPath, handler)}'),`
+                outString += `\t '${reactCase(handle)}':\trequire('./${path.posix.relative(dstPath, handler)}'),`
             }
             outString += "\n}\n"
             outString += template.default.toString() + '\n'
