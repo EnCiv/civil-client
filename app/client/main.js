@@ -95,7 +95,7 @@ export default function clientMain(App, props) {
       window.Synapp.fontSize = parseFloat(
         window.getComputedStyle(window.reactContainer, null).getPropertyValue('font-size')
       )
-      ReactDOM.render(<App {...props} />, window.reactContainer)
+      ReactDOM.render(React.createElement(App, props), window.reactContainer) //createElement instead of <App {...props} /> because it doesn't build when installed as a package in another repo
     } catch (error) {
       document.getElementsByTagName('body')[0].style.backgroundColor = 'red'
       logger.error('render Error', error)
@@ -112,7 +112,7 @@ export default function clientMain(App, props) {
     window.Synapp.fontSize = parseFloat(
       window.getComputedStyle(window.reactContainer, null).getPropertyValue('font-size')
     )
-    ReactDOM.hydrate(<App {...props} />, window.reactContainer) // should be hydrate
+    ReactDOM.hydrate(React.createElement(App, props), window.reactContainer) //createElement instead of <App {...props} /> because it doesn't build when installed as a package in another repo
   } catch (error) {
     document.getElementsByTagName('body')[0].style.backgroundColor = 'red'
     logger.info('hydrate Error', error)
