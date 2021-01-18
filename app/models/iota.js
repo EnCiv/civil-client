@@ -1,7 +1,6 @@
 'use strict'
 const Joi = require('@hapi/joi')
 const MongoModels = require('mongo-models')
-const iota = require('../../iota.json')
 
 const schema = Joi.object({
   _id: Joi.object(),
@@ -17,6 +16,37 @@ const schema = Joi.object({
 })
 
 class Iota extends MongoModels {
+  static load(objs) {
+    if (Iota._load)
+      Iota._load = Iota._load.concat(objs)
+    else if (!MongoModels.dbs['default'])
+      Iota._load = objs
+    else
+      Iota._write_load(objs)
+  }
+  static _write_load(objs) {
+    return new Promise(async (ok, ko) => {
+      if (process.env.NODE_ENV !== 'production') {
+        // convert object _id's to objects
+        objs.forEach(i => {
+          i._id = Iota.ObjectID(i._id.$oid)
+        })
+        logger.info('Iota.init updating for development')
+        for await (const doc of objs) {
+          try {
+            const result = await Iota.replaceOne({ _id: doc._id }, doc, { upsert: true })
+            if (typeof result !== 'object' || result.length !== 1) {
+              logger.error('Iota.init result not ok', result, 'for', doc)
+              // don't through errors here-  keep going
+            }
+          } catch (err) {
+            logger.error('Iota.init caught error trying to replaceOne for', err, 'doc was', doc)
+            // don't through errors here - just keep going
+          }
+        }
+      }
+    })
+  }
   static create(obj) {
     return new Promise(async (ok, ko) => {
       try {
@@ -52,34 +82,10 @@ function init() {
       ])
       var count = await Iota.count()
       logger.info('Iota.init count', count)
-      if (iota && iota.length) {
-        // convert object _id's to objects
-        iota.forEach(i => {
-          i._id = Iota.ObjectID(i._id.$oid)
-        })
-        if (!count) {
-          var writeResult = await Iota.insertMany(iota)
-          if (!writeResult || !writeResult.length) {
-            logger.error('Iota.init error initializing collection')
-          } else {
-            logger.info('Iota.init collection initialized with', writeResult.length, 'documents')
-          }
-        } else if (process.env.NODE_ENV !== 'production') {
-          logger.info('Iota.init updating for development')
-          for await (const doc of iota) {
-            try {
-              const result = await Iota.replaceOne({ _id: doc._id }, doc, { upsert: true })
-              if (typeof result !== 'object' || result.length !== 1) {
-                logger.error('Iota.init result not ok', result, 'for', doc)
-                // don't through errors here-  keep going
-              }
-            } catch (err) {
-              logger.error('Iota.init caught error trying to replaceOne for', err, 'doc was', doc)
-              // don't through errors here - just keep going
-            }
-          }
-        }
-      }
+      if (!(Iota._load && (process.env.NODE_ENV !== 'production' || !count))) return ok()
+      // if development, or if production but nothing in the database
+      await Iota._write_load(Iota._load)
+      delete Iota._load
       return ok()
     } catch (err) {
       logger.error('Iota.createIndexes error:', err)

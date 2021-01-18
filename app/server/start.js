@@ -3,6 +3,10 @@
 'use strict'
 
 import Server from './server'
+import Iota from '../models/Iota'
+import iota from '../../iota.json'
+
+Iota.load(iota)
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 async function start() {
