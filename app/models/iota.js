@@ -45,6 +45,7 @@ class Iota extends MongoModels {
           }
         }
       }
+      return ok()
     })
   }
   static create(obj) {
