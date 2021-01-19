@@ -1,9 +1,8 @@
 'use strict';
-// everything between the {} below will be replaced by index-handlers
-// and make sure there are no nested {} within it
+// the line below will be replace with the auto generated table of components from the referenced directories
 const Components = {}
 /**
- * The main source of the following code is in github.com/EnCiv/civil-server/app/components/web-components/index.js
+ * The main source of the following code is in github.com/EnCiv/civil-server/app/components/web-components-template.js
  * do not edit it in any other repo - it will get clobbered by the next build. 
  * 
  */
