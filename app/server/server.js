@@ -15,6 +15,7 @@ import log4js from 'log4js'
 import MongoModels from 'mongo-models'
 import mongologger from './util/mongo-logger'
 import path from 'path'
+import App from '../components/app'
 
 if (!global.logger) {
   log4js.configure({
@@ -41,6 +42,7 @@ class HttpServer {
     this.routesDirPaths = [path.resolve(__dirname, '../routes')]
     this.serverEventsDirPaths = [path.resolve(__dirname, '../events')]
     this.socketAPIsDirPaths = [path.resolve(__dirname, '../api')]
+    this.App = App
     this.setUserCookie = setUserCookie.bind(this) // user cookie needs this context so it doesn't have to lookup users in the DB every time
     this.socketAPI = new SocketAPI()
   }
@@ -50,9 +52,8 @@ class HttpServer {
       try {
         await fetchHandlers(dirPath, this.routeHandlers)
         ok()
-      }
-      catch (error) {
-        logger.error("sever.addRoutesDirectory caught error:", error)
+      } catch (error) {
+        logger.error('sever.addRoutesDirectory caught error:', error)
         ko(error)
       }
     })
@@ -63,7 +64,7 @@ class HttpServer {
       try {
         handler.apply(this)
       } catch (error) {
-        logger.error("server.processRouteHandlers caught error:", handle, error)
+        logger.error('server.processRouteHandlers caught error:', handle, error)
       }
     }
   }
@@ -72,8 +73,7 @@ class HttpServer {
     return new Promise(async (ok, ko) => {
       // heroku is going to delete the MONGODB_URI var on Nov10 - we need something else to use in the mean time
       const MONGODB_URI = process.env.PRIMARYDB_URI || process.env.MONGODB_URI
-      if (!MONGODB_URI)
-        ko(new Error('Missing PRIMARYDB_URI or MONGODB_URI'))
+      if (!MONGODB_URI) ko(new Error('Missing PRIMARYDB_URI or MONGODB_URI'))
       await MongoModels.connect({ uri: MONGODB_URI }, { useUnifiedTopology: true })
       // any models that need to createIndexes will push their init function
       for await (const init of MongoModels.toInit) {
@@ -96,20 +96,22 @@ class HttpServer {
   }
 
   notFound() {
+    const serverReactRenderApp = serverReactRender.bind(this.App)
     this.app.use((req, res, next) => {
       res.statusCode = 404
       req.notFound = true
       next()
-    }, serverReactRender)
+    }, serverReactRenderApp)
   }
 
   error() {
+    const serverReactRenderApp = serverReactRender.bind(this.App)
     this.app.use((error, req, res, next) => {
       logger.error('server caught error', error)
       res.statusCode = 500
       res.locals.error = error
       next()
-    }, serverReactRender)
+    }, serverReactRenderApp)
   }
 
   start() {
@@ -125,7 +127,8 @@ class HttpServer {
         this.app.use(helmet.hidePoweredBy({ setTo: 'Powered by Ruby on Rails.' }))
         this.app.use(bodyParser.urlencoded({ extended: true }), bodyParser.json(), bodyParser.text())
         this.app.use(cookieParser())
-        this.app.use('/assets/',
+        this.app.use(
+          '/assets/',
           express.static('assets', {
             maxAge: process.env.NODE_ENV === 'production' ? process.env.ASSETS_MAX_AGE || 1 * 24 * 60 * 60 * 1000 : 0,
           })
@@ -142,12 +145,12 @@ class HttpServer {
             env: this.app.get('env'),
           })
           await this.socketAPI.start(this.server)
-          console.info("SocketAPI started")
+          console.info('SocketAPI started')
           await serverEvents.start()
           return ok()
         })
       } catch (error) {
-        console.error("Server caught error trying to start", error)
+        console.error('Server caught error trying to start', error)
       }
     })
   }

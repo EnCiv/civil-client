@@ -2,11 +2,10 @@
 
 import React from 'react' // needed by render to string
 import { renderToString } from 'react-dom/server'
-import App from '../../components/app'
 import { JssProvider, SheetsRegistry, createGenerateId } from 'react-jss'
 import cloneDeep from 'lodash/cloneDeep'
 
-function serverReactRender(req, res, next) {
+function serverReactRender(App, req, res, next) {
   try {
     const dev = process.env.NODE_ENV || 'development'
 

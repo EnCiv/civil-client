@@ -1,4 +1,4 @@
-'use strict';
+'use strict'
 import serverReactRender from '../server/routes/server-react-render'
 
 function resetPassword(req, res, next) {
@@ -27,6 +27,6 @@ export default function route() {
   this.app.get(
     ['/page/reset-password/:token', '/page/reset-password/:token/*'],
     resetPassword,
-    serverReactRender
+    serverReactRender.bind(this.App)
   )
 }

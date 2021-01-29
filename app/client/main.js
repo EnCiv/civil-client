@@ -8,8 +8,7 @@ import ReactDOM from 'react-dom'
 import bconsole from './bconsole'
 import socketlogger from './socketlogger'
 
-
-if (typeof window !== "undefined") {
+if (typeof window !== 'undefined') {
   // only do this stuff if running on the browser.  On the server don't do it
   if (
     !(
@@ -43,10 +42,9 @@ if (typeof window !== "undefined") {
       NoSocket: true,
     }
   }
-  if (typeof process === 'undefined')
-    global.process = {}
+  if (typeof process === 'undefined') global.process = {}
   if (!process.env) process.env = {}
-  if (!process.env.NODE_ENV) process.env.NODE_ENV = "development"
+  if (!process.env.NODE_ENV) process.env.NODE_ENV = 'development'
   // process has to be defined before log4js is imported on the browser side.
   process.env.LOG4JS_CONFIG = { appenders: [] } // webpack doesn't initialize the socket logger right - so just prevent log4js from initializing loggers
   var log4js = require('log4js')
@@ -112,13 +110,9 @@ export default function clientMain(App, props) {
     window.Synapp.fontSize = parseFloat(
       window.getComputedStyle(window.reactContainer, null).getPropertyValue('font-size')
     )
-    ReactDOM.hydrate(React.createElement(App, props), window.reactContainer) //createElement instead of <App {...props} /> because it doesn't build when installed as a package in another repo
+    ReactDOM.hydrate(React.createElement(App, reactProps), window.reactContainer) //createElement instead of <App {...props} /> because it doesn't build when installed as a package in another repo
   } catch (error) {
     document.getElementsByTagName('body')[0].style.backgroundColor = 'red'
     logger.info('hydrate Error', error)
   }
 }
-
-
-
-
