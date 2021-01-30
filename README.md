@@ -19,7 +19,7 @@ And when changes/improvements are made to this project, they can be easilly upda
 - **React Progressive Web Applications** for interactive pages with low server load
 - **Socket.io** for asyncronous, bidirectional API's
 - **Server Events** for extensibility
-- **Nodemon** for email notifications
+- **Nodemailer** for email notifications
 - **Send In Blue** for templated transactional email
 - **Helmet** for improved security
 - **Webpack and nodemon** for interactive development
