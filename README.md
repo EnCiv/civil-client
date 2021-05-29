@@ -7,6 +7,8 @@ Demo at https://civil-server.herokuapp.com
 The idea is that Civil Server is a component with some basic funcationality that will be useful to a lot of projects.
 Some projects may take this and add more features and create a component out of that will be useful to other projects.
 
+To get started with contributing to this project, follow the instructions to install the [civil-server-template](https://github.com/EnCiv/civil-server-template)
+
 And when changes/improvements are made to this project, they can be easilly updated in other projects.
 
 **Copyright 2021 EnCiv, Inc.** This work is licensed under the terms described in [LICENSE.txt](https://github.com/EnCiv/civil-server/blob/master/LICENSE.txt) which is an MIT license with a [Public Good License Condition](https://github.com/EnCiv/undebate#the-need-for-a-public-good-license-condition).
