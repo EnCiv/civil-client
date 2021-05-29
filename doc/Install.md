@@ -31,24 +31,19 @@ Heroku calls them 'apps' but think of it as a server instance in the cloud with 
     heroku create undebate-something-unique
 
 Then we add the MongoDB database. It's also in cloud. You will be able to use this one database when you are running locally, and when you are running in the cloud. Follow the instructions in this slide show:
-    https://docs.google.com/presentation/d/10fEk_OdfN-dYh9PlqG6nTFlu4ENvis_owdHbqWYDpBI/present?slide=id.gb4a0dbf10b_0_93
+https://docs.google.com/presentation/d/10fEk_OdfN-dYh9PlqG6nTFlu4ENvis_owdHbqWYDpBI/present?slide=id.gb4a0dbf10b_0_93
 
 Now lets get the environment variable with the URI for that database and store it in your bash configuration file so you can use it when you run locally. This string has a password in it and it should never be shared or commited to a repo. The .gitignore file ignores .bashrc so it won't get added into a repo - just make sure it stays that way.
+
 ```
     echo 'export MONGODB_URI="mongodb+srv://any-name-you-want:Znkx8UyAZAV15xRK@cluster0.xtpzi.mongodb.net/anydbname?retryWrites=true&w=majority"' >> .bashrc
 ```
-Now lets add the MONGODB_URI to the heroku server: 
+
+Now lets add the MONGODB_URI to the heroku server:
+
 ```
     heroku config:set MONGODB_URI="mongodb+srv://any-name-you-want:Znkx8UyAZAV15xRK@cluster0.xtpzi.mongodb.net/anydbname?retryWrites=true&w=majority"
 ```
-
-Now we will add Cloudinary - a Content Delivery Network that has image and video manipulation features. A CDN gives you a place to store these things, and deliver them quickly over the internet. Your node server would be slower, and doesn't keep the files after the server restarts. In the text that follows, replace [something unique] with some name that you come up with, including the []'s for example undebate-banana
-
-    heroku addons:create cloudinary:starter -a undebate-[something unique]
-
-Again we get the environment variable with the URL for Cloudinary and store it in your config file for local use. There's a password in the string, so keep it secret.
-
-    echo "export CLOUDINARY_URL="\"`heroku config:get CLOUDINARY_URL -a undebate-[something unique]`\" >> .bashrc
 
 Now we just tell node we are in development mode locally, but on heroku we set it to production. There are a few optimizations that are applied in production, and it's important to check to make sure it works that way.
 
@@ -84,25 +79,7 @@ cat iota.json | grep path
 Here is the list as of the time of this writing:
 
 ```
-    "path": "/candidate-conversation-5",
-    "path": "/candidate-conversation",
-    "path": "/candidate-conversation-candidate-recorder",
-    "path": "/candidate-conversation-candidate-recorder-sendinblue",
-    "path": "/candidate-conversation-candidate-recorder-with-email",
-    "path": "/what-is-democracy",
-    "path": "/youtube",
-    "path": "/hackforla-projects",
-    "path": "/hackforla-projects-recorder",
-    "path": "/schoolboard-undebate",
-    "path": "/schoolboard-undebate-candidate-recorder",
-    "path": "/candidate-conversation-2",
-    "path": "/candidate-conversation-3",
-    "path": "/candidate-conversation-4",
-    "path": "/candidate-conversation-6",
-    "path": "/candidate-conversation-7",
-    "path": "/test-join",
-    "path": "/iframe-demo",
-    "path": "/unpoll-demo"
+    "path": "/join",
 ```
 
 Just take the url part, like "what-is-democracy" and add either localhost:3011 or https://undebate-[something unique].herokuapp.com at the beginning and you will be able to check it out.

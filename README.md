@@ -17,6 +17,7 @@ And when changes/improvements are made to this project, they can be easilly upda
 - **MongoDB** for extensible user database
 - **React Server Sider Rendering** for quick page loads
 - **React Progressive Web Applications** for interactive pages with low server load
+- **React-Jss** for inline styles
 - **Socket.io** for asyncronous, bidirectional API's
 - **Server Events** for extensibility
 - **Nodemailer** for email notifications
@@ -178,7 +179,29 @@ The default function of the file will be called with this of the express object.
 
 # Events Dirctory
 
-Within the server, components can generate events, and listen for events. Each file in the events directory represents an event listener, and can define the name of an Event.
+Within the server, components can listen for and generate events. Each file in the events directory represents an event listener, and can define the name of an Event.
+
+To create an event listener create a file in app/events like this:
+
+```
+import { Iota, serverEvents } from 'civil-server'
+
+serverEvents.eNameAdd('EventName')
+
+function eventListener(p1,p2,...){
+
+}
+
+serverEvents.on(serverEvents.eNames.EventName, eventListener)
+
+```
+
+In the code that is going to generate the event, do this:
+
+```
+import { Iota, serverEvents } from 'civil-server'
+serverEvents.emit(serverEvents.eNames.ParticipantCreated, p1, p2, ...)
+```
 
 # Web Components Directory
 
@@ -193,3 +216,12 @@ Contributions are accepted under the MIT License without additional conditions. 
 You will need a github.com account, and a heroku.com account. Heroku is like a server in the cloud that you can push git repo's to, and after you push, heroku will build and run them. It's also great because they give you free accounts that you can use for development.
 
 The install instructions are **[here](./doc/Install.md)**
+
+# To Include Civil Server in an existing project
+
+```
+
+npm install git+https://github.com/EnCiv/civil-server.git#main
+```
+
+Make a copy of [startup.js](https://github.com/EnCiv/civil-server-template/blob/main/app/start.js) and put it in `app/start.js`

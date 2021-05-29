@@ -1,37 +1,43 @@
-'use strict';
+'use strict'
 // the line below will be replace with the auto generated table of components from the referenced directories
 const Components = {}
 /**
  * The main source of the following code is in github.com/EnCiv/civil-server/app/components/web-components-template.js
- * do not edit it in any other repo - it will get clobbered by the next build. 
- * 
+ * do not edit it in any other repo - it will get clobbered by the next build.
+ *
  */
 import React from 'react'
 function WebComponents(props) {
-    const objOrStr = props.webComponent
-    var WebComponentClass
-    var newProps = {}
+  const objOrStr = props.webComponent
+  var WebComponentClass
+  var newProps = {}
 
-    if (typeof objOrStr === 'object') {
-        Object.assign(newProps, props, objOrStr)
-        WebComponentClass = Components[objOrStr.webComponent]
-    } else {
-        // string
-        Object.assign(newProps, props)
-        WebComponentClass = Components[objOrStr]
-    }
-    if (typeof WebComponentClass === 'undefined') {
-        logger.error('WebComponent not defined:', objOrStr)
-        return null
-    }
-    if (WebComponentClass.default)
+  if (typeof objOrStr === 'object') {
+    Object.assign(newProps, props, objOrStr)
+    WebComponentClass = Components[objOrStr.webComponent]
+  } else {
+    // string
+    Object.assign(newProps, props)
+    WebComponentClass = Components[objOrStr]
+  }
+  if (typeof WebComponentClass === 'undefined') {
+    logger.error('WebComponent not defined:', objOrStr)
+    if (Components.UnknownWebComponent) {
+      WebComponentClass = Components.UnknownWebComponent
+      if (WebComponentClass.default)
         // commonJS module or require
         WebComponentClass = WebComponentClass.default
+      // includes newProps.webComponent so it can be seen
+      return <WebComponentClass {...newProps} />
+    } else return 'Unknown Web Component: ' + JSON.stringify(objOrStr)
+  }
+  if (WebComponentClass.default)
+    // commonJS module or require
+    WebComponentClass = WebComponentClass.default
 
-    delete newProps.webComponent
+  delete newProps.webComponent
 
-    return <WebComponentClass {...newProps} />
+  return <WebComponentClass {...newProps} />
 }
 
 export default WebComponents
-

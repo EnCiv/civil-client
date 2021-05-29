@@ -40,8 +40,14 @@ class Join extends React.Component {
   render() {
     return (
       <div style={{ width: '100vw', height: '100vh', textAlign: 'center', verticalAlign: 'middle' }}>
-        <AuthForm className={this.props.classes['join']} onChange={this.onUserLogin.bind(this)} />
-        <div>info: {JSON.stringify(this.state.info)}</div>
+        {this.state.info === 'empty' ? (
+          <AuthForm className={this.props.classes['join']} onChange={this.onUserLogin.bind(this)} />
+        ) : (
+          <>
+            <div>Welcome Aboard</div>
+            <div>info: {JSON.stringify(this.state.info)}</div>
+          </>
+        )}
       </div>
     )
   }
