@@ -2,7 +2,7 @@
 
 import SocketIO from 'socket.io'
 import cookieParser from 'cookie-parser'
-import ss from 'socket.io-stream'
+import ss from '@sap_oss/node-socketio-stream'
 import User from '../models/user'
 
 import fetchHandlers from './util/fetch-handlers'
@@ -29,9 +29,8 @@ class API {
       try {
         await fetchHandlers(dirPath, this.handlers)
         return ok()
-      }
-      catch (error) {
-        logger.error("api.addSockeAPIsDirtectory caught error:", error)
+      } catch (error) {
+        logger.error('api.addSockeAPIsDirtectory caught error:', error)
         ko(error)
       }
     })
@@ -54,7 +53,8 @@ class API {
   start(server) {
     return new Promise(async (ok, ko) => {
       try {
-        this.io = SocketIO.listen(server)
+        this.io = SocketIO(server)
+        //server.listen
         logger.info('socketIO listening')
         this.io
           .use(this.identify.bind(this))
@@ -66,14 +66,13 @@ class API {
             logger.error('socket io connection_timeout', error, this)
           })
       } catch (error) {
-        logger.error("API start caught error", error)
+        logger.error('API start caught error', error)
       }
     })
   }
 
   async validateUserCookie(cookie, ok, ko) {
-    if (this.users.some(user => user.id === cookie.id))
-      return ok()
+    if (this.users.some(user => user.id === cookie.id)) return ok()
     else {
       let usr = await User.findOne({ _id: User.ObjectID(cookie.id) })
       if (!usr) {
@@ -99,7 +98,7 @@ class API {
         },
       }
 
-      cookieParser()(req, null, () => { })
+      cookieParser()(req, null, () => {})
 
       let cookie = req.cookies.synuser
 
@@ -119,7 +118,7 @@ class API {
         )
       } else next()
     } catch (error) {
-      logger.info("API.identify caught error", error)
+      logger.info('API.identify caught error', error)
     }
   }
 
@@ -134,7 +133,7 @@ class API {
       socket.on('error', error => logger.error('API.connected socket got error event', error))
       socket.on('connect_timeout', error => logger.error('socket connected timeout', error))
       socket.on('connect_error', error => logger.error('socket connect_error', error))
-      socket.on('disconnect', () => { })
+      socket.on('disconnect', () => {})
       socket.emit('welcome', socket.synuser)
       socket.broadcast.emit('online users', this.users.length)
       socket.emit('online users', this.users.length)
@@ -150,13 +149,13 @@ class API {
       }
 
       for (let handle in this.handlers) {
-        if (handle.startsWith('stream')) // handlers that use streams need to start with 'stream' and they are wrapped differently to work
+        if (handle.startsWith('stream'))
+          // handlers that use streams need to start with 'stream' and they are wrapped differently to work
           ss(socket.on(handle, handlerWrapper.bind(socket, this.handlers[handle], handle)))
-        else
-          socket.on(handle, handlerWrapper.bind(socket, this.handlers[handle], handle))
+        else socket.on(handle, handlerWrapper.bind(socket, this.handlers[handle], handle))
       }
     } catch (error) {
-      logger.error("api.connected caughet error", error)
+      logger.error('api.connected caughet error', error)
     }
   }
 }
