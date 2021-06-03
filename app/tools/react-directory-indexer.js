@@ -1,13 +1,37 @@
 const fs = require('fs') // require so it runs as is without having to bable it
 const path = require('path')
 
+global.args = {
+  templateFile: '../components/web-components-template.js',
+  case: 'ReactCase',
+  dirPaths: [],
+}
+
+var argv = process.argv
+for (let arg = 2; arg < argv.length; arg++) {
+  switch (argv[arg]) {
+    case '--ReactCase':
+      args.case = 'ReactCase'
+      break
+    case '--web':
+      args.templateFile = '../components/web-components-template.jsx'
+      break
+    case '--data':
+      args.templateFile = '../components/data-components-template.js'
+      break
+    default:
+      args.dirPaths.push(argv[arg])
+  }
+}
+
 // we need the string of the template file - require gets you the function but not all the stuff above and below that babel adds
-const templateFile = path.resolve(__dirname, '../components/web-components-template.js')
+const templateFile = path.resolve(__dirname, args.templateFile)
 const templateString = fs.readFileSync(templateFile, 'utf8')
 
 // file names shoulde be in kebob-case
 // but react comonents should be in ReactCase - meaning the first letter, as well as the first letter after a -, with the - removed
 function reactCase(str) {
+  if (args.case !== 'ReactCase') return str
   let arr = str.split('-')
   let Capitals = arr.map((item, index) => item.charAt(0).toUpperCase() + item.slice(1).toLowerCase())
   let ReactString = Capitals.join('')
@@ -61,6 +85,5 @@ function reactDirectoryIndexer(dstPath, dirPaths) {
     }
   })
 }
-let dirPaths = []
-for (let i = 2; i < process.argv.length; i++) dirPaths.push(process.argv[i])
-reactDirectoryIndexer(process.argv[2], dirPaths)
+
+reactDirectoryIndexer(args.dirPaths[0], args.dirPaths)

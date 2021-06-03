@@ -87,3 +87,4 @@ cypress/screenshots
 
 #this index is auto generated
 app/components/web-components/index.js
+app/components/data-components/index.js

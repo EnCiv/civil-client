@@ -1,9 +1,3 @@
-'use strict'
-
-Object.defineProperty(exports, '__esModule', {
-  value: true,
-})
-exports.default = exports.DataComponents = void 0
 // the line below will be replace with the auto generated table of components from the referenced directories
 const Components = {}
 /**
@@ -11,11 +5,9 @@ const Components = {}
  * do not edit it in any other repo - it will get clobbered by the next build.
  *
  */
-
-class DataComponents {
+export class DataComponents {
   static attributes(component) {
     let Component
-
     if (typeof component === 'object') {
       Component = Components[component.component]
       if (typeof Component === 'object') return Component.attributes
@@ -26,7 +18,6 @@ class DataComponents {
       else return {}
     }
   }
-
   static fetch(component) {
     var Component
 
@@ -39,14 +30,9 @@ class DataComponents {
     }
 
     if (typeof Component === 'function') return Component
-    logger.error('DataComponent component not defined', {
-      component,
-    })
+    logger.error('DataComponent component not defined', { component })
     return null
   }
 }
 
-exports.DataComponents = DataComponents
-var _default = DataComponents
-exports.default = _default
-//# sourceMappingURL=data-components-template.js.map
+export default DataComponents
