@@ -38,12 +38,25 @@ function reactCase(str) {
   return ReactString
 }
 
+function asyncMkdir(path) {
+  return new Promise((ok, ko) => {
+    fs.mkdir(path, { recursive: true }, err => {
+      if (err) {
+        if (err.code == 'EEXIST') ok(null)
+        // Ignore the error if the folder already exists
+        else ko(err) // Something else went wrong
+      } else ok(null) // Successfully created folder
+    })
+  })
+}
+
 function reactDirectoryIndexer(dstPath, dirPaths) {
   if (dstPath[dstPath.length - 1] !== '/') dstPath += '/'
   console.info('dirPath', dirPaths)
   return new Promise(async (ok, ko) => {
     let handlers = {}
     try {
+      await asyncMkdir(dstPath) // make sure the destination directory exists
       if (typeof dirPaths === 'string') dirPaths = [dirPaths] // originally it was just a string, but now it should be an array
       for await (const dirPath of dirPaths) {
         var filenames = await new Promise((ok, ko) => {
