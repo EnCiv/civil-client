@@ -94,8 +94,8 @@
     "webrtc-adapter": "^7.2.9"
   },
   "engines": {
-    "node": "~10.16.2",
-    "npm": "6.13.4"
+    "node": ">10.x.x",
+    "npm": ">6.x.x"
   },
   "husky": {
     "hooks": {
