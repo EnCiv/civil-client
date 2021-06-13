@@ -22,8 +22,8 @@ cp ./node_modules/socket.io-stream/socket.io-stream.js ./assets/js/
 babel app/components/web-components-template.jsx app/components/data-components-template.js --ignore **/__tests__ --out-dir dist/components --source-maps
 # then we need to babel-transpile the indexer, and create the web-components index 
 babel app/tools/react-directory-indexer.js --ignore **/__tests__ --out-dir dist/tools --source-maps
-node dist/tools/react-directory-indexer.js app/components/web-components/
-node dist/tools/react-directory-indexer.js --data app/components/data-components/
+node dist/tools/react-directory-indexer.js app/web-components/
+node dist/tools/react-directory-indexer.js --data app/data-components/
 
 echo '*************************************************************************'
 echo TRANSPILE

@@ -70,7 +70,7 @@ App is your outer wrapper React App for the whole web site. A minimal version lo
 ```
 import React from 'react'
 import { hot } from 'react-hot-loader'
-import WebComponents from './web-components'
+import WebComponents from '../web-components'
 import Footer from './footer'
 import ErrorBoundary from './error-boundary'
 

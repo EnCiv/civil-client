@@ -86,5 +86,5 @@ cypress/videos
 cypress/screenshots
 
 #this index is auto generated
-app/components/web-components/index.js
-app/components/data-components/index.js
+app/web-components/index.js
+app/data-components/index.js

@@ -4,10 +4,10 @@
 
 import theCivilServer from './the-civil-server'
 import Iota from '../models/Iota'
-import iota from '../../iota.json'
+import iotas from '../../iotas.json'
 import App from '../components/app'
 
-Iota.load(iota)
+Iota.load(iotas)
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 async function start() {

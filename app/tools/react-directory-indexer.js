@@ -2,7 +2,7 @@ const fs = require('fs') // require so it runs as is without having to bable it
 const path = require('path')
 
 global.args = {
-  templateFile: '../components/web-components-template.js',
+  templateFile: '../web-components-template.js',
   case: 'ReactCase',
   dirPaths: [],
 }
@@ -14,10 +14,10 @@ for (let arg = 2; arg < argv.length; arg++) {
       args.case = 'ReactCase'
       break
     case '--web':
-      args.templateFile = '../components/web-components-template.jsx'
+      args.templateFile = '../web-components-template.jsx'
       break
     case '--data':
-      args.templateFile = '../components/data-components-template.js'
+      args.templateFile = '../data-components-template.js'
       break
     default:
       args.dirPaths.push(argv[arg])

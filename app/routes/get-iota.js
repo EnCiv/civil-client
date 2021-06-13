@@ -3,7 +3,7 @@
 import serverReactRender from '../server/routes/server-react-render'
 import Sniffr from 'sniffr'
 import Device from 'device'
-import { DataComponent } from '../components/data-components'
+import DataComponents from '../data-components'
 import Iota from '../models/iota'
 
 async function getIota(req, res, next) {
@@ -18,7 +18,7 @@ async function getIota(req, res, next) {
     if (req.reactProps) req.reactProps.iota = iota
     else req.reactProps = { iota }
     if (iota.component) {
-      const dataComponent = DataComponent.fetch(iota.component)
+      const dataComponent = DataComponents.fetch(iota.component)
       await dataComponent.fetch(iota)
       // the fetch'ed operation must operate on the Object passed
       next()

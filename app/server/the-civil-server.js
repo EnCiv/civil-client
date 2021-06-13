@@ -41,7 +41,7 @@ class HttpServer {
     this.routeHandlers = {}
     this.routesDirPaths = [path.resolve(__dirname, '../routes')]
     this.serverEventsDirPaths = [path.resolve(__dirname, '../events')]
-    this.socketAPIsDirPaths = [path.resolve(__dirname, '../api')]
+    this.socketAPIsDirPaths = [path.resolve(__dirname, '../socket-apis')]
     this.App = App
     this.setUserCookie = setUserCookie.bind(this) // user cookie needs this context so it doesn't have to lookup users in the DB every time
     this.socketAPI = new SocketAPI()
