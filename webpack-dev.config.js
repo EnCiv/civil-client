@@ -1,6 +1,5 @@
 const path = require('path')
 const webpack = require('webpack')
-const compressionplugin = require('compression-webpack-plugin')
 
 const use = [
   {
