@@ -70,7 +70,7 @@ App is your outer wrapper React App for the whole web site. A minimal version lo
 ```
 import React from 'react'
 import { hot } from 'react-hot-loader'
-import WebComponents from './web-components'
+import WebComponents from '../web-components'
 import Footer from './footer'
 import ErrorBoundary from './error-boundary'
 
@@ -186,7 +186,7 @@ Within the server, components can listen for and generate events. Each file in t
 To create an event listener create a file in app/events like this:
 
 ```
-import { Iota, serverEvents } from 'civil-server'
+import { serverEvents } from 'civil-server'
 
 serverEvents.eNameAdd('EventName')
 
@@ -202,7 +202,7 @@ In the code that is going to generate the event, do this:
 
 ```
 import { Iota, serverEvents } from 'civil-server'
-serverEvents.emit(serverEvents.eNames.ParticipantCreated, p1, p2, ...)
+serverEvents.emit(serverEvents.eNames.EventName, p1, p2, ...)
 ```
 
 # Web Components Directory

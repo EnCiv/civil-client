@@ -17,18 +17,20 @@ const schema = Joi.object({
 
 class Iota extends MongoModels {
   static load(objs) {
-    if (Iota._load)
-      Iota._load = Iota._load.concat(objs)
-    else if (!MongoModels.dbs['default'])
-      Iota._load = objs
-    else
-      Iota._write_load(objs)
+    if (Iota._load) Iota._load = Iota._load.concat(objs)
+    else if (!MongoModels.dbs['default']) Iota._load = objs
+    else Iota._write_load(objs)
   }
   static _write_load(objs) {
     return new Promise(async (ok, ko) => {
       if (process.env.NODE_ENV !== 'production') {
+        let idCheck = {}
         // convert object _id's to objects
         objs.forEach(i => {
+          if (idCheck[i._id.$oid]) {
+            logger.error('Iota._write_load duplicate id found. Replacing:\n', idCheck[i._id.$oid], '\nwith\n', i)
+          }
+          idCheck[i._id.$oid] = i
           i._id = Iota.ObjectID(i._id.$oid)
         })
         logger.info('Iota.init updating for development')
