@@ -154,6 +154,12 @@ class API {
           ss(socket.on(handle, handlerWrapper.bind(socket, this.handlers[handle], handle)))
         else socket.on(handle, handlerWrapper.bind(socket, this.handlers[handle], handle))
       }
+      // thanks to https://stackoverflow.com/questions/41751141/socket-io-how-to-access-unhandled-messages
+      socket.conn.on('message', msg => {
+        if (!Object.keys(socket._events).includes(msg.split('"')[1])) {
+          logger.error(`WARNING: Unhandled Event: ${msg}`)
+        }
+      })
     } catch (error) {
       logger.error('api.connected caughet error', error)
     }
