@@ -147,17 +147,23 @@ class API {
       socket.error = error => {
         logger.error('api connected socket.error caught error', error)
       }
+      var ssSocket
 
       for (let handle in this.handlers) {
-        if (handle.startsWith('stream'))
+        if (handle.endsWith('development') && process.env.NODE_ENV !== 'development') continue // ignore handlers that end with "development" in production
+        if (handle.startsWith('stream')) {
+          if (!ssSocket) ssSocket = ss(socket)
           // handlers that use streams need to start with 'stream' and they are wrapped differently to work
-          ss(socket.on(handle, handlerWrapper.bind(socket, this.handlers[handle], handle)))
-        else socket.on(handle, handlerWrapper.bind(socket, this.handlers[handle], handle))
+          ssSocket.on(handle, handlerWrapper.bind(ssSocket, this.handlers[handle], handle))
+        } else socket.on(handle, handlerWrapper.bind(socket, this.handlers[handle], handle))
       }
       // thanks to https://stackoverflow.com/questions/41751141/socket-io-how-to-access-unhandled-messages
       socket.conn.on('message', msg => {
-        if (!Object.keys(socket._events).includes(msg.split('"')[1])) {
-          logger.error(`WARNING: Unhandled Event: ${msg}`)
+        if (typeof msg === 'string' && !Object.keys(socket._events).includes(msg.split('"')[1])) {
+          logger.error(`WARNING: Unhandled Socket API Event: ${msg}`)
+        } else if (typeof msg !== 'string' && !msg instanceof Buffer) {
+          //streams come across as Buffers - don't error on that
+          logger.error('Warning Unhandles Socket API event not a string or Buffer', msg)
         }
       })
     } catch (error) {
