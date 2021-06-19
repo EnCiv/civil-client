@@ -16,6 +16,14 @@ function handlerWrapper(handler, handle, ...args) {
   }
 }
 
+function handlerStreamWrapper(handler, handle, ...args) {
+  try {
+    handler.call(this, ...args)
+  } catch (error) {
+    logger.error('caught error from stream api handler', handle, error.message, 'continuing', error)
+  }
+}
+
 class API {
   constructor() {
     this.users = []
@@ -65,6 +73,7 @@ class API {
           .on('connect_timeout', error => {
             logger.error('socket io connection_timeout', error, this)
           })
+          .on('error', err => logger.error('socketAPI server caught error', err))
       } catch (error) {
         logger.error('API start caught error', error)
       }
@@ -144,17 +153,19 @@ class API {
         socket.emit('OK ' + event, ...responses)
       }
 
-      socket.error = error => {
-        logger.error('api connected socket.error caught error', error)
-      }
       var ssSocket
 
       for (let handle in this.handlers) {
         if (handle.endsWith('development') && process.env.NODE_ENV !== 'development') continue // ignore handlers that end with "development" in production
         if (handle.startsWith('stream')) {
-          if (!ssSocket) ssSocket = ss(socket)
+          if (!ssSocket) {
+            ssSocket = ss(socket)
+            ssSocket.on('error', err => logger.error('socket-api ssSocket error', err))
+            ssSocket.on('uncaughtException', err => logger.error('socket uncaught', err))
+            ssSocket.on('close', () => console.error('got close'))
+          }
           // handlers that use streams need to start with 'stream' and they are wrapped differently to work
-          ssSocket.on(handle, handlerWrapper.bind(ssSocket, this.handlers[handle], handle))
+          ssSocket.on(handle, handlerStreamWrapper.bind(ssSocket, this.handlers[handle], handle))
         } else socket.on(handle, handlerWrapper.bind(socket, this.handlers[handle], handle))
       }
       // thanks to https://stackoverflow.com/questions/41751141/socket-io-how-to-access-unhandled-messages

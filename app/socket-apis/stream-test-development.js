@@ -2,10 +2,12 @@
 const { pipeline } = require('stream')
 
 export default function streamTest(stream) {
-  try {
-    console.info('stream test on server', stream)
-    pipeline(stream, process.stdout, err => err && console.log(err))
-  } catch (err) {
-    console.info('streamTest caught error', err)
-  }
+  console.info('stream test on server', stream)
+  let self = this // is an ss(socket)
+  pipeline(stream, process.stdout, err => {
+    process.stdout.end()
+    self._ondisconnect()
+    self.sio.disconnect(true)
+    err && console.error(err)
+  })
 }
