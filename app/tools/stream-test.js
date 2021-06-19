@@ -2,9 +2,12 @@
 const { pipeline } = require('stream')
 const ss = require('@sap_oss/node-socketio-stream')
 
+var host = process.argv[2] || 'http://localhost:3011'
+console.info('target is', host)
+
 // client side
 const client = require('socket.io-client')
-const socket = client.connect('http://localhost:3011')
+const socket = client.connect(host)
 
 socket.on('connect', () => {
   var stream = ss.createStream()

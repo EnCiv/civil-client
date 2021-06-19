@@ -45,6 +45,11 @@ class HttpServer {
     this.App = App
     this.setUserCookie = setUserCookie.bind(this) // user cookie needs this context so it doesn't have to lookup users in the DB every time
     this.socketAPI = new SocketAPI()
+    if (process.listeners('uncaughtException') === 0) {
+      process.on('uncaughtException', err => {
+        logger.error('theCivliServer: Uncaught Exception thrown\n', err, '\ncontinuing')
+      })
+    }
   }
 
   addRoutesDirectory(dirPath) {
