@@ -4,7 +4,9 @@ const ss = require('@sap_oss/node-socketio-stream')
 
 var host = process.argv[2] || 'http://localhost:3011'
 console.info('target is', host)
-
+console.info(
+  'When you ^C to terminate this, it will chash webpack if you are connected to http://localhost:3011.\nIf you connect to http://localhost:3102 the server will catch the error and throw a message, but the console output will still be screwed up.'
+)
 // client side
 const client = require('socket.io-client')
 const socket = client.connect(host)
