@@ -74,8 +74,10 @@ class API {
             logger.error('socket io connection_timeout', error, this)
           })
           .on('error', err => logger.error('socketAPI server caught error', err))
+        ok()
       } catch (error) {
         logger.error('API start caught error', error)
+        ko(error)
       }
     })
   }
@@ -170,7 +172,9 @@ class API {
       }
       // thanks to https://stackoverflow.com/questions/41751141/socket-io-how-to-access-unhandled-messages
       socket.conn.on('message', msg => {
-        if (typeof msg === 'string' && !Object.keys(socket._events).includes(msg.split('"')[1])) {
+        if (msg === '1') {
+          // this is what you get when a connection is being closed - ignore it
+        } else if (typeof msg === 'string' && !Object.keys(socket._events).includes(msg.split('"')[1])) {
           logger.error(`WARNING: Unhandled Socket API Event: ${msg}`)
         } else if (typeof msg !== 'string' && !msg instanceof Buffer) {
           //streams come across as Buffers - don't error on that
