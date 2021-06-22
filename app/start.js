@@ -2,10 +2,10 @@
 
 'use strict'
 
-import theCivilServer from './the-civil-server'
-import Iota from '../models/Iota'
-import iotas from '../../iotas.json'
-import App from '../components/app'
+import theCivilServer from './server/the-civil-server'
+import Iota from './models/Iota'
+import iotas from '../iotas.json'
+import App from './components/app'
 
 Iota.load(iotas)
 

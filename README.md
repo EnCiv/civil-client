@@ -21,9 +21,7 @@ And when changes/improvements are made to this project, they can be easilly upda
 - **React Progressive Web Applications** for interactive pages with low server load
 - **React-Jss** for inline styles
 - **Socket.io** for asyncronous, bidirectional API's
-- **Server Events** for extensibility
-- **Nodemailer** for email notifications
-- **Send In Blue** for templated transactional email
+- **Server Events** for extensibility communication between api's that generate events, and multiple handlers for them
 - **Helmet** for improved security
 - **Webpack and nodemon** for interactive development
 - **Log4js** for logging to a collection in MongoDB
@@ -37,9 +35,8 @@ _start.js_
 ```
 "use strict";
 
-var civilServer= require('civil-server').default
 const path=require('path')
-import {Iota} from "civil-server"
+import {civilServer, Iota} from "civil-server"
 import iotas from '../iotas.json'
 import App from './components/app'
 
@@ -188,10 +185,8 @@ To create an event listener create a file in app/events like this:
 ```
 import { serverEvents } from 'civil-server'
 
-serverEvents.eNameAdd('EventName')
-
 function eventListener(p1,p2,...){
-
+ ...
 }
 
 serverEvents.on(serverEvents.eNames.EventName, eventListener)
@@ -202,12 +197,15 @@ In the code that is going to generate the event, do this:
 
 ```
 import { Iota, serverEvents } from 'civil-server'
+
+serverEvents.eNameAdd('EventName')
+
 serverEvents.emit(serverEvents.eNames.EventName, p1, p2, ...)
 ```
 
 # Web Components Directory
 
-Each file represents a React Component. When a url matches an iota collection path, the component named in the document is looked for in the Web Components directory, and is used to render the data in the document.
+Each file in [web-components](./app/web-components) represents a React Component. When a url matches in the iota collection path property, the web-component named in the document is looked up in the Web Components directory, and is used to render the data in the document.
 
 # Contributions
 
@@ -222,8 +220,87 @@ The install instructions are **[here](./doc/Install.md)**
 # To Include Civil Server in an existing project
 
 ```
-
 npm install git+https://github.com/EnCiv/civil-server.git#main
 ```
 
-Make a copy of [startup.js](https://github.com/EnCiv/civil-server-template/blob/main/app/start.js) and put it in `app/start.js`
+Make a copy of [start.js](https://github.com/EnCiv/civil-server-template/blob/main/app/start.js) and put it in `app/start.js`
+
+## How to add a new web page to the server
+
+Here is the flow. When a user visits the server with a url, `getIota()` in [get-iota.js](./app/routes/get-iota) will look up the path in the database. If it finds a match, it will look for a webComponent property and then look for a matching component in the [web-components](./app/web-components) directory and render that on the server through [app/server/routes/serverReactRender](./app/server/routes/server-react-render.jsx). All the properties of this webComponent will be passed as props to the corresponding React component.Then the page will be sent to the browser, and then rehydrated there, meaning the webComponent will run again on the browser, starting at [app/client/main-app.js](./app/client/main-app.js) and react will connect all the DOM elements.
+
+### 1) Add a React Component to [./app/web-components](./app/components/web-components)
+
+here is a simple one, ./app/web-components/undebate-iframes.js:
+
+```
+'use strict'
+
+import React from 'react'
+import injectSheet from 'react-jss'
+
+
+const styles = {
+  title: {
+    color: 'black',
+    fontSize: '2rem',
+    textAlign: 'center',
+  },
+  frame: { marginTop: '1em', marginBottom: '1em', width: '100vw' },
+}
+
+class UndebateIframes extends React.Component {
+  render() {
+    const { classes } = this.props
+    const width = typeof window !== 'undefined' ? window.innerWidth : 1920
+    const height = typeof window !== 'undefined' ? window.innerHeight : 1080
+
+    return (
+      <div>
+        <div>
+          <span className={classes['title']}>These are the Undebates</span>
+        </div>
+        <iframe
+          className={classes.frame}
+          height={height * 0.9}
+          width={width}
+          name="race1"
+          src="https://cc.enciv.org/san-francisco-district-attorney"
+        />
+        <iframe
+          className={classes.frame}
+          height={height * 0.9}
+          width={width}
+          name="race2"
+          src="https://cc.enciv.org/country:us/state:wi/office:city-of-onalaska-mayor/2020-4-7"
+        />
+      </div>
+    )
+  }
+}
+export default injectSheet(styles)(UndebateIframes)
+```
+
+### 2) Create a new document in [iotas.json](./iotas.json)
+
+The example is the minimum information required. Any additional properties you add to webComponent will be passed as props to the associated React component.
+
+```
+[ ...,
+  {
+      "_id": {"$oid": "60d25dc95185ab71b8fa44a0"},
+      "path": "/iframe-demo",
+      "subject": "Iframe demo",
+      "description": "a quick prototype of a page showing multiple undebates in separate iframes",
+      "webComponent": {
+          "webComponent": "UndebateIframes"
+      },
+  }
+]
+```
+
+Note: use `app/tools/mongo-id` to create a new, unique mongo id and paste it in.
+
+### 3) Advanced: Component
+
+If your page should pull data out of the database, or calculate something to pass to the web component, then you can add a component to [app/data-components](./app/data-components) and then add a component: {component: YourComponentNane, ...} to the document above.
