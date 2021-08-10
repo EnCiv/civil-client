@@ -15,8 +15,8 @@ const AuthForm = props => {
     email: '',
     password: '',
     confirmPassword: '',
-    firstName: userInfo && userInfo.firstName || '',
-    lastName: userInfo && userInfo.lastName || '',
+    firstName: (userInfo && userInfo.firstName) || '',
+    lastName: (userInfo && userInfo.lastName) || '',
   })
   const [isDisabled, setIsDisabled] = useState(true)
   const [infoMessage, setInfoMessage] = useState(null)
@@ -191,20 +191,20 @@ const AuthForm = props => {
             loginErrors={loginErrors}
           />
         ) : (
-            <JoinForm
-              handleSignUp={handleSignUp}
-              hasAgreed={hasAgreed}
-              setHasAgreed={setHasAgreed}
-              formValidationErrors={formValidationErrors}
-              handleOnBlur={handleOnBlur}
-              handleChange={handleChange}
-              formValues={formValues}
-              infoMessage={infoMessage}
-              isDisabled={isDisabled}
-              classes={classes}
-              validationMessages={validationMessages}
-            />
-          )}
+          <JoinForm
+            handleSignUp={handleSignUp}
+            hasAgreed={hasAgreed}
+            setHasAgreed={setHasAgreed}
+            formValidationErrors={formValidationErrors}
+            handleOnBlur={handleOnBlur}
+            handleChange={handleChange}
+            formValues={formValues}
+            infoMessage={infoMessage}
+            isDisabled={isDisabled}
+            classes={classes}
+            validationMessages={validationMessages}
+          />
+        )}
       </form>
     </div>
   )
@@ -218,6 +218,8 @@ const useStyles = createUseStyles({
     flexDirection: 'column',
     width: '30rem',
     maxWidth: '30rem',
+    marginLeft: 'auto',
+    marginRight: 'auto',
     minHeight: '42rem',
     fontSize: 'inherit',
     '& form': {},
