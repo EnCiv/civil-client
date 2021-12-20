@@ -57,7 +57,7 @@ function useAuth(onChange, userInfo = {}) {
           dispatch({ confirm })
         },
         skip(cb) {
-          const { agree, email } = state
+          let { agree, email } = state
           if (!agree) {
             dispatch({ error: 'Please agree to our terms of service', info: '', success: '' })
             return
@@ -66,6 +66,7 @@ function useAuth(onChange, userInfo = {}) {
             dispatch({ error: 'email address is not valid', info: '', success: '' })
             return
           }
+          if (!email) email = undefined // '' causes a validation error on the server because Joi.string().email() can't be blank in the User schema
           // for skip - the password is just a unique signature
           let password = ''
           let length = Math.floor(Math.random() * 9) + 8 // the lenght will be between 8 and 16 characters
