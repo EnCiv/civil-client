@@ -1,4 +1,4 @@
-# **Civil Server**
+# **Civil Client**
 
 This is a node server, as a component that can be included in other projects and extended for use by other projects. It is spun out from the [undebate](https://github.com/EnCiv/undebate) project so that it can be used as a common component of many projects.
 
@@ -304,3 +304,82 @@ Note: use `app/tools/mongo-id` to create a new, unique mongo id and paste it in.
 ### 3) Advanced: Component
 
 If your page should pull data out of the database, or calculate something to pass to the web component, then you can add a component to [app/data-components](./app/data-components) and then add a component: {component: YourComponentNane, ...} to the document above.
+
+# useAuth
+
+A react hook that provides state and methods for building user login and join react components. That authorization methods are separated out makeing it easy to build different react components for different UI/UX for user login and signup.
+
+```
+import {useAuth} from 'civil-client'
+const [state, methods]=useAuth(onChange, userInfo)
+
+```
+
+## onChange
+
+a callback in join, login, or skip will override this parameter
+
+- falsey: do nothing after success
+- string: set location.href after success
+- function: to call after success with {userId: ObjectId, ...other-user-props} as paremeter.
+
+## userInfo
+
+other user info to pass to the server and database with the login/join/skip operation like firstName, lastName
+
+## state
+
+```js
+{
+  email: 'string',
+  password: 'string'
+  confirm: 'string'
+  agree: 'bool'
+  error: 'string',
+  info: 'string',
+  success: 'string
+}
+```
+
+## methods
+
+```js
+{
+  onChangeEmail(email){},
+  onChangePassword(password){},
+  onChangeConfirm(confirm){},
+  onChangeAgree(agreed){},
+  skip(cb){}, // skip the join process and assign a temporary id. But user must agree to the terms.
+  login(cb){}, // login - requires email and password
+  join(cb){}, // requiers email, password, confirm, agreed
+  sendResetPassword(){}, // requires email
+}
+```
+
+## Example
+
+```js
+import React, { useState, useEffect } from 'react'
+import { useAuth } from 'civil-client'
+
+export function UserLogin(props) {
+  const [userInfo, setUserInfo] = useState(false)
+  function onChange(userInfo) {
+    setUserInfo(true)
+  }
+  const [state, methods] = useAuth(onChange, {})
+  return (
+    <div>
+      <input name="email" onChange={e => methods.onChangeEmail(e.value)} />
+      <input name="password" type="password" onChange={e => methods.onChangePassword(e.value)} />
+      <button onClick={e => methods.login()}>Login</button>
+      <div>
+        {state.error && <div style={{ color: 'red' }}>{state.error}</div>}
+        {state.info && <div>{state.info}</div>}
+        {state.success && <div style={{ color: 'green' }}>{state.success}</div>}
+      </div>
+      <div>userInfo: {JSON.stringify(userInfo)}</div>
+    </div>
+  )
+}
+```

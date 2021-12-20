@@ -1,6 +1,6 @@
 {
   "name": "civil-client",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "react components for civil-server",
   "main": "dist/index.js",
   "scripts": {
@@ -59,9 +59,11 @@
     "@svgr/cli": "^6.1.2",
     "babel-loader": "^8.2.3",
     "body-parser": "^1.19.1",
+    "buffer": "^6.0.3",
     "classnames": "^2.3.1",
     "core-js": "^3.20.0",
     "is-email": "^1.0.2",
+    "isemail": "^3.2.0",
     "log4js": "git+https://github.com/ddfridley/log4js-node.git#onbrowser",
     "log4js-extend": "^0.2.1",
     "react": "^16.14.0",
@@ -69,7 +71,8 @@
     "react-hot-loader": "^4.13.0",
     "react-jss": "^10.9.0",
     "regenerator-runtime": "^0.13.9",
-    "superagent": "^6.1.0"
+    "superagent": "^6.1.0",
+    "use-methods": "github:EnCiv/use-methods"
   },
   "husky": {
     "hooks": {
