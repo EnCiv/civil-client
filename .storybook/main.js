@@ -13,16 +13,16 @@ module.exports = {
     if (!config.resolve.fallback) config.resolve.fallback = {}
     Object.assign(config.resolve.fallback, {
       fs: false,
-      //buffer: require.resolve("buffer"),
-      //path: require.resolve("path-browserify"),
+      buffer: require.resolve('buffer'),
+      path: require.resolve('path-browserify'),
       stream: require.resolve('stream-browserify'),
       os: require.resolve('os-browserify/browser'),
       zlib: require.resolve('browserify-zlib'),
       constants: require.resolve('constants-browserify'),
     })
     if (!config.plugins) config.plugins = []
-    //    config.plugins.push(new webpack.ProvidePlugin({Buffer: ['buffer','Buffer']}))
-    //    config.plugins.push(new webpack.ProvidePlugin({process: 'process/browser'}))// fix "process is not defined" error: // (do "npm install process" before running the build)
+    config.plugins.push(new webpack.ProvidePlugin({ Buffer: ['buffer', 'Buffer'] }))
+    config.plugins.push(new webpack.ProvidePlugin({ process: 'process/browser' })) // fix "process is not defined" error: // (do "npm install process" before running the build)
     for (const plugin of config.plugins) {
       if (plugin.definitions) {
         if (plugin.definitions['process.env']) {
