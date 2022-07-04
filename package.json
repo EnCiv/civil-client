@@ -1,6 +1,6 @@
 {
   "name": "civil-client",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "react components for civil-server",
   "main": "dist/index.js",
   "scripts": {
@@ -25,8 +25,7 @@
     "url": "https://github.com/EnCiv/civil-client/issues"
   },
   "homepage": "https://github.com/EnCiv/civil-client#readme",
-  "peerDependencies": {
-    "@babel/cli": "^7.16.0",
+  "optionalDependencies": {
     "@storybook/addon-actions": "^6.4.9",
     "@storybook/addon-essentials": "^6.4.9",
     "@storybook/addon-links": "^6.4.9",
@@ -44,6 +43,7 @@
     "pretty-quick": "^3.1.2"
   },
   "devDependencies": {
+    "@babel/cli": "^7.16.0",
     "webpack": "^5.65.0",
     "webpack-cli": "^4.9.1",
     "webpack-dev-server": "^4.6.0"
