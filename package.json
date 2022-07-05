@@ -1,6 +1,6 @@
 {
   "name": "civil-client",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "react components for civil-server",
   "main": "dist/index.js",
   "scripts": {
@@ -11,7 +11,7 @@
     "svgr": "svgr --icon --filename-case kebab assets/svg --out-dir app/svgr && rm app/svgr/index.js",
     "transpile": "babel app --ignore **/__tests__ --out-dir dist --source-maps",
     "hot-transpile": "babel --watch app --ignore **/__tests__ --out-dir dist --source-maps",
-    "postinstall": "bash postinstall.sh",
+    "build": "npm run svgr && npm run transpile",
     "storybook": "start-storybook -p 6006",
     "build-storybook": "build-storybook"
   },
@@ -40,15 +40,11 @@
     "jest-enzyme": "^7.1.2",
     "nodemon": "^2.0.15",
     "prettier": "^2.5.1",
-    "pretty-quick": "^3.1.2"
+    "pretty-quick": "^3.1.2",
+    "webpack-dev-server": "^4.6.0"
   },
   "devDependencies": {
     "@babel/cli": "^7.16.0",
-    "webpack": "^5.65.0",
-    "webpack-cli": "^4.9.1",
-    "webpack-dev-server": "^4.6.0"
-  },
-  "dependencies": {
     "@babel/core": "^7.16.5",
     "@babel/plugin-proposal-class-properties": "^7.16.5",
     "@babel/plugin-proposal-object-rest-spread": "^7.16.5",
@@ -57,9 +53,13 @@
     "@babel/plugin-transform-runtime": "^7.16.5",
     "@babel/preset-env": "^7.16.5",
     "@babel/preset-react": "^7.16.5",
-    "@babel/runtime": "^7.16.5",
     "@svgr/cli": "^6.1.2",
     "babel-loader": "^8.2.3",
+    "webpack": "^5.65.0",
+    "webpack-cli": "^4.9.1"
+  },
+  "dependencies": {
+    "@babel/runtime": "^7.16.5",
     "buffer": "^6.0.3",
     "classnames": "^2.3.1",
     "core-js": "^3.20.0",
