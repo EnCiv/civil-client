@@ -56,7 +56,7 @@ export const LoginForm = ({
       <FormInput labelName="PASSWORD" name="password" value={password} handleChange={handleChange} type="password" />
       <div style={{ marginTop: '2rem', display: 'flex', justifyContent: 'flex-end' }}>
         <AuthBtn
-          classes={cx(classes.loginBtn, isDisabled ? classes.disable : classes.activeBtn)}
+          classes={cx(classes.formBtn, isDisabled ? classes.disable : classes.activeBtn)}
           handleClick={handleLogin}
           btnName="Login"
         />

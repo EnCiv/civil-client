@@ -250,7 +250,7 @@ const useStyles = createUseStyles({
   hide: {
     display: 'none',
   },
-  loginBtn: {
+  formBtn: {
     width: '9rem',
     height: '3rem',
     fontSize: '1.5rem',
