@@ -27,7 +27,6 @@ export const LoginForm = ({
   const handleEmailBlur = email && !isEmail(email)
 
   const sendResetPassword = e => {
-    e.preventDefault()
     setInfoMessage('One moment...')
     window.socket.emit('send-password', email, window.location.pathname, response => {
       if (response.error) {
@@ -36,8 +35,10 @@ export const LoginForm = ({
         if (error === 'User not found') {
           error = 'Email not found'
         }
+        setInfoMessage(null)
         setFormValidationErrors(error)
       } else {
+        setFormValidationErrors([])
         setInfoMessage('Message sent! Please check your inbox')
       }
     })
