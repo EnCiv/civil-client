@@ -19,7 +19,7 @@ const Template = args => {
   return (
     <div style={{ width: '100vw', height: '100vh' }}>
       <div style={{ width: '100%', textAlign: 'center' }}>
-        success@email, password will work. Anything else won't. See .storybook/middleware.js
+        success@email.com, password will work. Anything else won't. See .storybook/middleware.js
       </div>
       <div
         style={{

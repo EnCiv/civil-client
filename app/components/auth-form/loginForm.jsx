@@ -1,9 +1,10 @@
 import React from 'react'
 import isEmail from 'is-email'
+import cx from 'classnames'
 
 import { FormInput } from './formInput'
 import { AuthBtn } from './authBtn'
-import { AgreementTerms } from './agreementTerms'
+import { ForgotPassword } from './forgotPassword'
 
 export const LoginForm = ({
   handleChange,
@@ -25,9 +26,10 @@ export const LoginForm = ({
   const { emailBlurMsg, passwordBlurMsg } = validationMessages
   const handleEmailBlur = email && !isEmail(email)
 
-  const sendResetPassword = () => {
-    setInfoMessage('One momnet...')
-    window.socket.emit('send password', email, window.location.pathname, response => {
+  const sendResetPassword = e => {
+    e.preventDefault()
+    setInfoMessage('One moment...')
+    window.socket.emit('send-password', email, window.location.pathname, response => {
       if (response.error) {
         let { error } = response
 
@@ -52,9 +54,14 @@ export const LoginForm = ({
         placeHolder="email@address.com"
       />
       <FormInput labelName="PASSWORD" name="password" value={password} handleChange={handleChange} type="password" />
-      <div style={{ marginTop: '2rem' }}>
-        <AuthBtn classes={isDisabled ? classes.disable : classes.activeBtn} handleClick={handleLogin} btnName="Login" />
+      <div style={{ marginTop: '2rem', display: 'flex', justifyContent: 'flex-end' }}>
+        <AuthBtn
+          classes={cx(classes.loginBtn, isDisabled ? classes.disable : classes.activeBtn)}
+          handleClick={handleLogin}
+          btnName="Login"
+        />
       </div>
+      <ForgotPassword sendResetPassword={sendResetPassword} />
       {infoMessage && <span>{infoMessage}</span>}
       {loginErrors && <div className={classes.formValidationErrors}>{loginErrors}</div>}
     </>

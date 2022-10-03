@@ -250,24 +250,19 @@ const useStyles = createUseStyles({
   hide: {
     display: 'none',
   },
-  disable: {
-    backgroundColor: '#D3D3D3',
-    float: 'right',
+  loginBtn: {
     width: '9rem',
     height: '3rem',
     fontSize: '1.5rem',
     fontWeight: '600',
-    fontSize: 'inherit',
+  },
+  disable: {
+    backgroundColor: '#D3D3D3',
   },
   activeBtn: {
     backgroundColor: '#E5A650',
     cursor: 'pointer',
-    float: 'right',
-    width: '9rem',
-    height: '3rem',
     color: 'white',
-    fontSize: '1.5rem',
-    fontWeight: '600',
   },
   agreementWrapper: {
     display: 'flex',
