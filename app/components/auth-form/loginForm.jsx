@@ -26,7 +26,7 @@ export const LoginForm = ({
   const { emailBlurMsg, passwordBlurMsg } = validationMessages
   const handleEmailBlur = email && !isEmail(email)
 
-  const sendResetPassword = e => {
+  const sendForgotPassword = e => {
     setInfoMessage('One moment...')
     window.socket.emit('send-password', email, window.location.pathname, response => {
       if (response.error) {
@@ -62,7 +62,7 @@ export const LoginForm = ({
           btnName="Login"
         />
       </div>
-      <ForgotPassword sendResetPassword={sendResetPassword} />
+      <ForgotPassword sendForgotPassword={sendForgotPassword} />
       {infoMessage && <span>{infoMessage}</span>}
       {loginErrors && <div className={classes.formValidationErrors}>{loginErrors}</div>}
     </>
