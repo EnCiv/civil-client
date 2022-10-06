@@ -1,6 +1,6 @@
 'use strict'
 
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { createUseStyles } from 'react-jss'
 import { FormInput } from './formInput'
 import { AuthBtn } from './authBtn'
@@ -13,7 +13,12 @@ function ResetPassword({ activationToken, returnTo }) {
   const [resetKey, setResetKey] = useState('')
   const [newPassword, setNewPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
+  const [token, setToken] = useState(activationToken)
   const PASSWORD_MISMATCH_ERROR = "Passwords don't match"
+
+  useEffect(() => {
+    setToken(activationToken)
+  }, [activationToken])
 
   const sendResetPassword = e => {
     e.preventDefault()
@@ -24,10 +29,11 @@ function ResetPassword({ activationToken, returnTo }) {
       return
     }
     setInfoMessage('One moment...')
-    window.socket.emit('reset-password', activationToken, resetKey, newPassword, result => {
+    window.socket.emit('reset-password', token, resetKey, newPassword, result => {
       if (result) {
         setInfoMessage('')
-        setFormError('Error resetting password: ', result)
+        setFormError('Error resetting password, please try again or contact support')
+        console.error('Error resetting password: ', result)
         return
       }
       setInfoMessage('')
