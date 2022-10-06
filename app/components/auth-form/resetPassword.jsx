@@ -13,19 +13,21 @@ function ResetPassword({ activationToken, returnTo }) {
   const [resetKey, setResetKey] = useState('')
   const [newPassword, setNewPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
+  const PASSWORD_MISMATCH_ERROR = "Passwords don't match"
 
   const sendResetPassword = e => {
     e.preventDefault()
     setFormError('')
     if (newPassword !== confirmPassword) {
       setInfoMessage('')
-      setFormError("Passwords don't match")
+      setFormError(PASSWORD_MISMATCH_ERROR)
       return
     }
     setInfoMessage('One moment...')
     window.socket.emit('reset password', activationToken, resetKey, newPassword, result => {
       setInfoMessage('')
       setFormError('')
+      // todo is the timeout really necessary?
       setTimeout(() => (location.href = returnTo || '/join'), 800)
     })
   }
@@ -40,10 +42,15 @@ function ResetPassword({ activationToken, returnTo }) {
 
   const updateConfirmPasswordValue = e => {
     setConfirmPassword(e.target.value)
+    if (newPassword !== e.target.value) {
+      setFormError(PASSWORD_MISMATCH_ERROR)
+    } else {
+      setFormError('')
+    }
   }
 
   const isResetButtonActive = () => {
-    return resetKey !== '' && newPassword !== '' && confirmPassword !== ''
+    return resetKey !== '' && newPassword !== '' && confirmPassword !== '' && newPassword === confirmPassword
   }
 
   return (
@@ -60,12 +67,14 @@ function ResetPassword({ activationToken, returnTo }) {
           labelName={'NEW PASSWORD'}
           handleChange={updateNewPasswordValue}
           name={'newPassword'}
+          type={'password'}
           value={newPassword}
         />
         <FormInput
           labelName={'CONFIRM PASSWORD'}
           handleChange={updateConfirmPasswordValue}
           name={'confirmPassword'}
+          type={'password'}
           value={confirmPassword}
         />
         <div className={classes.buttonWrapper}>

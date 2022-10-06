@@ -38,14 +38,6 @@ async function signUpHandler(req, res) {
   }
 }
 
-// todo
-async function resetPasswordHandle(req, res) {
-  console.info('body', req.body)
-  const { newPassword, confirmPassword } = req.body
-  if (newPassword === 'password') {
-  }
-}
-
 async function tempId(req, res) {
   console.info('tempId body', req.body)
   let { password, ..._body } = req.body // don't let the password show up in the logs
