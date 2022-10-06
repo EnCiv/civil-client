@@ -25,6 +25,11 @@ function ResetPassword({ activationToken, returnTo }) {
     }
     setInfoMessage('One moment...')
     window.socket.emit('reset-password', activationToken, resetKey, newPassword, result => {
+      if (result) {
+        setInfoMessage('')
+        setFormError('Error resetting password: ', result)
+        return
+      }
       setInfoMessage('')
       setFormError('')
       // todo is the timeout really necessary?
