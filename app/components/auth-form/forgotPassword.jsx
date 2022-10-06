@@ -4,7 +4,7 @@ export const ForgotPassword = ({ sendForgotPassword }) => {
   return (
     <div>
       <p style={{ marginTop: '2rem' }}>
-        {"Forgot / Didn't set your password? "}
+        {'Forgot your password? '}
         <a href="#" onClick={sendForgotPassword}>
           Click here
         </a>

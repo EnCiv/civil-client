@@ -32,10 +32,5 @@ const Template = args => {
   )
 }
 
-export const NoUser = Template.bind({})
-NoUser.args = {}
-
-export const WithUser = Template.bind({})
-WithUser.args = {
-  user: { email: 'success@email.com' },
-}
+export const Default = Template.bind({})
+Default.args = {}

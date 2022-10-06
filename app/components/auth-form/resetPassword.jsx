@@ -6,15 +6,13 @@ import { FormInput } from './formInput'
 import { AuthBtn } from './authBtn'
 import cx from 'classnames'
 
-function ResetPassword({ user, activationKey, returnTo }) {
+function ResetPassword({ activationToken, returnTo }) {
   const classes = useStyles()
   const [infoMessage, setInfoMessage] = useState('')
   const [formError, setFormError] = useState('')
   const [resetKey, setResetKey] = useState('')
   const [newPassword, setNewPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
-
-  // todo confirm that user.email exists and is passed into this component?
 
   const sendResetPassword = e => {
     e.preventDefault()
@@ -25,7 +23,7 @@ function ResetPassword({ user, activationKey, returnTo }) {
       return
     }
     setInfoMessage('One moment...')
-    window.socket.emit('reset password', activationKey, resetKey, newPassword, result => {
+    window.socket.emit('reset password', activationToken, resetKey, newPassword, result => {
       setInfoMessage('')
       setFormError('')
       setTimeout(() => (location.href = returnTo || '/join'), 800)
@@ -50,7 +48,7 @@ function ResetPassword({ user, activationKey, returnTo }) {
 
   return (
     <div className={classes.formWrapper}>
-      {user ? <input disabled={true} value={user.email} /> : ''}
+      <div className={classes.header}>Reset Password</div>
       <form onSubmit={sendResetPassword}>
         <FormInput
           labelName={'RESET KEY FROM EMAIL'}
@@ -103,6 +101,11 @@ const useStyles = createUseStyles({
       marginTop: '3rem',
       fontSize: 'inherit',
     },
+  },
+  header: {
+    color: '#18397D',
+    fontSize: '2rem',
+    fontWeight: '900',
   },
   buttonWrapper: {
     marginTop: '2rem',
