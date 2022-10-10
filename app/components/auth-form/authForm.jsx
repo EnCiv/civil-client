@@ -21,7 +21,7 @@ const AuthForm = props => {
   const [isDisabled, setIsDisabled] = useState(true)
   const [infoMessage, setInfoMessage] = useState(null)
   const [formValidationErrors, setFormValidationErrors] = useState([])
-  const [loginErrors, setLoginErrors] = useState(null)
+  const [loginErrors, setLoginErrors] = useState([])
   const emailBlurMsg = 'email address is not valid'
   const passwordBlurMsg = 'Passwords do not match'
   const validationMessages = { emailBlurMsg, passwordBlurMsg }
@@ -116,7 +116,8 @@ const AuthForm = props => {
   const handleLogin = e => {
     e.preventDefault()
     if (isDisabled) return
-    setLoginErrors(null)
+    setLoginErrors([])
+    setFormValidationErrors([])
     setInfoMessage('Logging you in...')
     const { email, password } = formValues
     const updatedUserInfo = Object.assign({}, userInfo, { email, password })
@@ -126,6 +127,7 @@ const AuthForm = props => {
       .end((err, res) => {
         setInfoMessage(null)
         if (err) logger.error('Join.login error', err)
+        console.log('status', res.status)
         switch (res.status) {
           case 429:
             setLoginErrors(['Too many attempts logging in, try again in 24 hrs'])

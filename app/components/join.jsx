@@ -7,6 +7,7 @@ import Icon from './lib/icon'
 import Input from './lib/input'
 import isEmail from 'is-email'
 
+// todo this is unused, can it be deleted?
 class Join extends React.Component {
   constructor(props) {
     super(props)

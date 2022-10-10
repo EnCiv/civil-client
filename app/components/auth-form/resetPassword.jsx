@@ -29,11 +29,11 @@ function ResetPassword({ activationToken, returnTo }) {
       return
     }
     setInfoMessage('One moment...')
-    window.socket.emit('reset-password', token, resetKey, newPassword, result => {
-      if (result) {
+    window.socket.emit('reset-password', token, resetKey, newPassword, error => {
+      if (error) {
         setInfoMessage('')
         setFormError('Error resetting password, please try again or contact support')
-        console.error('Error resetting password: ', result)
+        console.error('Error resetting password: ', error)
         return
       }
       setInfoMessage('')
@@ -49,6 +49,11 @@ function ResetPassword({ activationToken, returnTo }) {
 
   const updateNewPasswordValue = e => {
     setNewPassword(e.target.value)
+    if (newPassword && newPassword !== e.target.value) {
+      setFormError(PASSWORD_MISMATCH_ERROR)
+    } else {
+      setFormError('')
+    }
   }
 
   const updateConfirmPasswordValue = e => {
