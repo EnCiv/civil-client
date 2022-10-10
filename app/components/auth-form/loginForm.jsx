@@ -41,14 +41,13 @@ export const LoginForm = ({
 
   const sendForgotPassword = e => {
     e.preventDefault()
-    console.log('email', email)
     if (!email || email === '') {
       setError(NO_EMAIL_ENTERED_ERROR)
       return
     }
     setInfoMessage('One moment...')
     window.socket.emit('send-password', email, window.location.pathname, response => {
-      if (response.error) {
+      if (response && response.error) {
         let { error } = response
 
         if (error === 'User not found') {
