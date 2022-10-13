@@ -127,7 +127,6 @@ const AuthForm = props => {
       .end((err, res) => {
         setInfoMessage(null)
         if (err) logger.error('Join.login error', err)
-        console.log('status', res.status)
         switch (res.status) {
           case 429:
             setLoginErrors(['Too many attempts logging in, try again in 24 hrs'])

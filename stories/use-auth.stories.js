@@ -38,9 +38,9 @@ const AuthForm = props => {
   }, [])
   return (
     <div>
-      <div>An ugly component to test useAuth with</div>
-      <div>success@email.com is the only email that will work here</div>
-      <div>password is the password for it</div>
+      <div>An ugly component to test useAuth with.</div>
+      <div>success@email.com is the only email that will work here.</div>
+      <div>"password" is the password for it.</div>
       <div>
         <label>email</label>
         <input name="email" onChange={e => methods.onChangeEmail(e.target.value)} />

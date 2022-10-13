@@ -180,8 +180,9 @@ function useAuth(onChange, userInfo = {}) {
           }
           dispatch({ error: '', info: 'One moment...', success: '' })
           window.socket.emit('send-password', email, window.location.pathname, response => {
-            if (response.error) {
+            if (response && response.error) {
               let { error } = response
+
               if (error === 'User not found') {
                 error = 'Email not found'
               }
