@@ -36,7 +36,7 @@ function ResetPassword({ activationToken, returnTo }) {
       setFormError(MISSING_PASSWORDS)
       return
     }
-    if (!doPasswordsMatch()) {
+    if (!doPasswordsMatch(newPassword, confirmPassword)) {
       setInfoMessage('')
       setFormError(PASSWORD_MISMATCH_ERROR)
       return
@@ -49,9 +49,9 @@ function ResetPassword({ activationToken, returnTo }) {
         console.error('Error resetting password: ', error)
         return
       }
-      setInfoMessage('')
+      setInfoMessage('Success! Redirecting')
       setFormError('')
-      // todo is the timeout really necessary?
+      // is the timeout really necessary? copied from synapp
       setTimeout(() => (location.href = returnTo || '/join'), 800)
     })
   }
