@@ -186,7 +186,7 @@ class Join extends React.Component {
         var errorMsg = ''
         switch (res.status) {
           case 429:
-            errorMsg = 'Too many attempts logging in, try again in 24 hrs'
+            errorMsg = res.text
             break
 
           case 404:
