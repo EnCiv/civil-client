@@ -14,6 +14,8 @@ function ResetPassword({ activationToken, returnTo }) {
   const [newPassword, setNewPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
   const [token, setToken] = useState(activationToken)
+  const MISSING_RESET_KEY = 'Missing Reset Key'
+  const MISSING_PASSWORDS = 'Missing Passwords'
   const PASSWORD_MISMATCH_ERROR = "Passwords don't match"
 
   useEffect(() => {
@@ -22,8 +24,19 @@ function ResetPassword({ activationToken, returnTo }) {
 
   const sendResetPassword = e => {
     e.preventDefault()
+    setInfoMessage('')
     setFormError('')
-    if (newPassword !== confirmPassword) {
+    if (!resetKey || resetKey === '') {
+      setInfoMessage('')
+      setFormError(MISSING_RESET_KEY)
+      return
+    }
+    if (!newPassword || !confirmPassword) {
+      setInfoMessage('')
+      setFormError(MISSING_PASSWORDS)
+      return
+    }
+    if (!doPasswordsMatch()) {
       setInfoMessage('')
       setFormError(PASSWORD_MISMATCH_ERROR)
       return
@@ -45,24 +58,29 @@ function ResetPassword({ activationToken, returnTo }) {
 
   const updateResetKeyValue = e => {
     setResetKey(e.target.value)
+    setFormError('')
   }
 
   const updateNewPasswordValue = e => {
     setNewPassword(e.target.value)
-    if (newPassword && newPassword !== e.target.value) {
-      setFormError(PASSWORD_MISMATCH_ERROR)
-    } else {
-      setFormError('')
-    }
+    checkPasswords(e.target.value, confirmPassword)
   }
 
   const updateConfirmPasswordValue = e => {
     setConfirmPassword(e.target.value)
-    if (newPassword !== e.target.value) {
-      setFormError(PASSWORD_MISMATCH_ERROR)
-    } else {
+    checkPasswords(newPassword, e.target.value)
+  }
+
+  const checkPasswords = (newPass, confirmPass) => {
+    if (doPasswordsMatch(newPass, confirmPass)) {
       setFormError('')
+    } else {
+      setFormError(PASSWORD_MISMATCH_ERROR)
     }
+  }
+
+  const doPasswordsMatch = (newPass, confirmPass) => {
+    return !newPass || !confirmPass || (newPass && confirmPass && newPass === confirmPass)
   }
 
   const isResetButtonActive = () => {
