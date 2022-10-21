@@ -110,7 +110,7 @@ function useAuth(onChange, userInfo = {}) {
               if (err) logger.error('Join.login error', err)
               switch (res.status) {
                 case 429:
-                  dispatch({ error: 'Too many attempts logging in, try again in 24 hrs', info: '', success: '' })
+                  dispatch({ error: res.text, info: '', success: '' })
                   return
                 case 404:
                   dispatch({ error: "Email / Password Don't Match", info: '', success: '' }) // email not found but don't say that to the user
@@ -180,8 +180,9 @@ function useAuth(onChange, userInfo = {}) {
           }
           dispatch({ error: '', info: 'One moment...', success: '' })
           window.socket.emit('send-password', email, window.location.pathname, response => {
-            if (response.error) {
+            if (response && response.error) {
               let { error } = response
+
               if (error === 'User not found') {
                 error = 'Email not found'
               }

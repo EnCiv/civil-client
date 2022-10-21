@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react'
 import superagent from 'superagent'
 import isEmail from 'is-email'
-import { JoinForm } from './joinForm'
-import { LoginForm } from './loginForm'
+import { JoinForm } from './join-form'
+import { LoginForm } from './login-form'
 import { Tabs } from './tabs'
 import { createUseStyles } from 'react-jss'
 
@@ -21,7 +21,7 @@ const AuthForm = props => {
   const [isDisabled, setIsDisabled] = useState(true)
   const [infoMessage, setInfoMessage] = useState(null)
   const [formValidationErrors, setFormValidationErrors] = useState([])
-  const [loginErrors, setLoginErrors] = useState(null)
+  const [loginErrors, setLoginErrors] = useState([])
   const emailBlurMsg = 'email address is not valid'
   const passwordBlurMsg = 'Passwords do not match'
   const validationMessages = { emailBlurMsg, passwordBlurMsg }
@@ -116,7 +116,8 @@ const AuthForm = props => {
   const handleLogin = e => {
     e.preventDefault()
     if (isDisabled) return
-    setLoginErrors(null)
+    setLoginErrors([])
+    setFormValidationErrors([])
     setInfoMessage('Logging you in...')
     const { email, password } = formValues
     const updatedUserInfo = Object.assign({}, userInfo, { email, password })
@@ -128,7 +129,7 @@ const AuthForm = props => {
         if (err) logger.error('Join.login error', err)
         switch (res.status) {
           case 429:
-            setLoginErrors(['Too many attempts logging in, try again in 24 hrs'])
+            setLoginErrors([res.text])
             break
           case 200:
             setInfoMessage('Welcome back')
@@ -250,24 +251,19 @@ const useStyles = createUseStyles({
   hide: {
     display: 'none',
   },
-  disable: {
-    backgroundColor: '#D3D3D3',
-    float: 'right',
+  formBtn: {
     width: '9rem',
     height: '3rem',
     fontSize: '1.5rem',
     fontWeight: '600',
-    fontSize: 'inherit',
+  },
+  disable: {
+    backgroundColor: '#D3D3D3',
   },
   activeBtn: {
     backgroundColor: '#E5A650',
     cursor: 'pointer',
-    float: 'right',
-    width: '9rem',
-    height: '3rem',
     color: 'white',
-    fontSize: '1.5rem',
-    fontWeight: '600',
   },
   agreementWrapper: {
     display: 'flex',

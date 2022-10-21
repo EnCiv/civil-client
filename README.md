@@ -307,7 +307,7 @@ If your page should pull data out of the database, or calculate something to pas
 
 # useAuth
 
-A react hook that provides state and methods for building user login and join react components. That authorization methods are separated out makeing it easy to build different react components for different UI/UX for user login and signup.
+A React hook that provides state and methods for building user login and join react components. That authorization methods are separated out, making it easy to build different react components for different UI/UX for user login and signup.
 
 ```
 import {useAuth} from 'civil-client'
@@ -321,7 +321,7 @@ a callback in join, login, or skip will override this parameter
 
 - falsey: do nothing after success
 - string: set location.href after success
-- function: to call after success with {userId: ObjectId, ...other-user-props} as paremeter.
+- function: to call after success with {userId: ObjectId, ...other-user-props} as parameter.
 
 ## userInfo
 

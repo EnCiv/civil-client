@@ -24,5 +24,3 @@ export const Tab = ({ classes, handleClick, tabText }) => {
     </div>
   )
 }
-
-export default Tabs

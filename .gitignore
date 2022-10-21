@@ -76,6 +76,7 @@ backups/
 #private stuff 
 _netrc
 .vscode/launch.*
+.idea
 yarn.lock
 
 # svgr files are generated from assets/svg using svgr

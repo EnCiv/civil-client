@@ -1,9 +1,10 @@
 import React from 'react'
 import isEmail from 'is-email'
 
-import { FormInput } from './formInput'
-import { AuthBtn } from './authBtn'
-import { AgreementTerms } from './agreementTerms'
+import { FormInput } from './form-input'
+import { AuthBtn } from './auth-btn'
+import { AgreementTerms } from './agreement-terms'
+import cx from 'classnames'
 
 export const JoinForm = ({
   handleOnBlur,
@@ -53,7 +54,13 @@ export const JoinForm = ({
         handleBlur={() => handleOnBlur(passwordBlurMsg, handlePasswordBlur)}
       />
       <AgreementTerms setHasAgreed={setHasAgreed} hasAgreed={hasAgreed} classes={classes.agreementWrapper} />
-      <AuthBtn classes={isDisabled ? classes.disable : classes.activeBtn} handleClick={handleSignUp} btnName="Join" />
+      <div style={{ marginTop: '2rem' }}>
+        <AuthBtn
+          classes={cx(classes.formBtn, isDisabled ? classes.disable : classes.activeBtn)}
+          handleClick={handleSignUp}
+          btnName="Join"
+        />
+      </div>
       {!!formValidationErrors.length && <span className={classes.formValidationErrors}>{formValidationErrors[0]}</span>}
       {infoMessage && <span>{infoMessage}</span>}
     </>

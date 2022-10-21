@@ -1,8 +1,8 @@
 import React from 'react'
-import Icon from '../lib/icon'
 import IconBoxChecked from '../../svgr/box-checked'
 import IconBoxEmpty from '../../svgr/box-empty'
 
+// todo this checkbox is not accessible
 export const AgreementTerms = ({ setHasAgreed, hasAgreed, classes }) => {
   return (
     <div className={classes}>
