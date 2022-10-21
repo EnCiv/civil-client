@@ -1,5 +1,4 @@
 import React from 'react'
-import Icon from '../lib/icon'
 import IconBoxChecked from '../../svgr/box-checked'
 import IconBoxEmpty from '../../svgr/box-empty'
 

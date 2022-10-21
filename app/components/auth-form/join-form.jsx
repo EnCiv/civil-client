@@ -1,9 +1,9 @@
 import React from 'react'
 import isEmail from 'is-email'
 
-import { FormInput } from './formInput'
-import { AuthBtn } from './authBtn'
-import { AgreementTerms } from './agreementTerms'
+import { FormInput } from './form-input'
+import { AuthBtn } from './auth-btn'
+import { AgreementTerms } from './agreement-terms'
 import cx from 'classnames'
 
 export const JoinForm = ({

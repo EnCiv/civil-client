@@ -2,8 +2,8 @@
 
 import React, { useEffect, useState } from 'react'
 import { createUseStyles } from 'react-jss'
-import { FormInput } from './formInput'
-import { AuthBtn } from './authBtn'
+import { FormInput } from './form-input'
+import { AuthBtn } from './auth-btn'
 import cx from 'classnames'
 
 function ResetPassword({ activationToken, returnTo }) {

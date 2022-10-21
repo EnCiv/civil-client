@@ -1,5 +1,5 @@
 import { React, useState } from 'react'
-import AuthForm from '../app/components/auth-form/authForm'
+import AuthForm from '../app/components/auth-form/auth-form'
 
 const Component = AuthForm
 const Name = 'AuthForm'

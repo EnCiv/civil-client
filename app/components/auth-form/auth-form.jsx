@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react'
 import superagent from 'superagent'
 import isEmail from 'is-email'
-import { JoinForm } from './joinForm'
-import { LoginForm } from './loginForm'
+import { JoinForm } from './join-form'
+import { LoginForm } from './login-form'
 import { Tabs } from './tabs'
 import { createUseStyles } from 'react-jss'
 
