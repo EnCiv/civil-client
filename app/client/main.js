@@ -7,6 +7,7 @@ import React from 'react'
 import ReactDOM from 'react-dom'
 import bconsole from './bconsole'
 import socketlogger from './socketlogger'
+import IdleTracker from 'idle-tracker'
 
 export default function clientMain(App, props) {
   if (typeof window !== 'undefined') {
@@ -36,6 +37,20 @@ export default function clientMain(App, props) {
         e.returnValue = ''
         window.socket.disconnect(true) // disconnect the socket so we don't see fewer connection timeouts on the server
       })
+      // close the socket after inactivity so the development server can shut down
+      const idleTracker = new IdleTracker({
+        timeout: 5 * 60 * 1000,
+        onIdleCallback: payload => {
+          if (payload.idle) {
+            console.info('disconnecting socket on idle')
+            socket.disconnect(true)
+          } else {
+            socket.open()
+            console.info('opening socket')
+          }
+        },
+      })
+      idleTracker.start()
     } else {
       window.NoSocket = true
       window.socket = {
