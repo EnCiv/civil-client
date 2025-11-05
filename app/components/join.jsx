@@ -3,15 +3,22 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
 import superagent from 'superagent'
-import Icon from './lib/icon'
+import CheckSquare from '../svgr/box-checked'
+import Square from '../svgr/box-empty'
 import Input from './lib/input'
 import isEmail from 'is-email'
 
-// todo this is unused, can it be deleted?
 class Join extends React.Component {
   constructor(props) {
     super(props)
-    this.state = { validationError: null, successMessage: null, info: null, joinActive: false, loginActive: false }
+    this.state = {
+      validationError: null,
+      successMessage: null,
+      info: null,
+      joinActive: false,
+      loginActive: false,
+      agreeChecked: false,
+    }
   }
 
   onPasswordBlur(e) {
@@ -55,8 +62,7 @@ class Join extends React.Component {
   signup() {
     let email = this.refs.email.value,
       password = this.refs.password.value,
-      confirm = this.refs.confirm.value,
-      agree = ReactDOM.findDOMNode(this.refs.agree)
+      confirm = this.refs.confirm.value
 
     this.setState({ validationError: null, info: 'Logging you in...' })
 
@@ -66,7 +72,7 @@ class Join extends React.Component {
       return
     }
 
-    if (!agree.classList.contains('fa-check-square-o')) {
+    if (!this.state.agreeChecked) {
       this.setState({ validationError: 'Please agree to our terms of service', info: null })
 
       return
@@ -116,11 +122,9 @@ class Join extends React.Component {
 
   //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   skip() {
-    let agree = ReactDOM.findDOMNode(this.refs.agree)
-
     this.setState({ validationError: null, info: 'Creating temporary account...' })
 
-    if (!agree.classList.contains('fa-check-square-o')) {
+    if (!this.state.agreeChecked) {
       this.setState({ validationError: 'Please agree to our terms of service', info: null })
       return
     }
@@ -186,7 +190,7 @@ class Join extends React.Component {
         var errorMsg = ''
         switch (res.status) {
           case 429:
-            errorMsg = res.text
+            errorMsg = res.text || 'Too many attempts logging in, try again later'
             break
 
           case 404:
@@ -194,7 +198,7 @@ class Join extends React.Component {
             break
 
           case 401:
-            errorMsg = "Email / Password Don't Match" // Wrong Password but dont say that to the users
+            errorMsg = "Email / Password Don't Match" // Wrong Password but don't say that to the users
             break
 
           case 200:
@@ -219,17 +223,9 @@ class Join extends React.Component {
   //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
   agree() {
-    let box = ReactDOM.findDOMNode(this.refs.agree)
-
-    if (box.classList.contains('fa-square-o')) {
-      box.classList.remove('fa-square-o')
-      box.classList.add('fa-check-square-o')
-    } else {
-      box.classList.add('fa-square-o')
-      box.classList.remove('fa-check-square-o')
-    }
-
-    this.onChangeActive()
+    this.setState({ agreeChecked: !this.state.agreeChecked }, () => {
+      this.onChangeActive()
+    })
   }
 
   stopPropagation(e) {
@@ -240,7 +236,7 @@ class Join extends React.Component {
     let email = this.refs.email.value,
       password = this.refs.password.value,
       confirm = this.refs.confirm.value,
-      agree = ReactDOM.findDOMNode(this.refs.agree).classList.contains('fa-check-square-o') // true if the box is checked
+      agree = this.state.agreeChecked
 
     if (!this.state.loginActive && email && isEmail(email) && password) this.setState({ loginActive: true })
     if (this.state.loginActive && (!email || !isEmail(email) || !password)) this.setState({ loginActive: false })
@@ -255,7 +251,7 @@ class Join extends React.Component {
 
     let email = this.refs.email.value
 
-    window.socket.emit('send password', email, window.location.pathname, response => {
+    window.socket.emit('send-password', email, window.location.pathname, response => {
       if (response.error) {
         let { error } = response
 
@@ -320,8 +316,17 @@ class Join extends React.Component {
               onChange={this.onChangeActive.bind(this)}
               onBlur={this.onPasswordBlur.bind(this)}
             />
-            <a className={className} href="#" onClick={this.agree.bind(this)}>
-              <Icon className={className} icon="square-o" size="2" ref="agree" name="agree" />
+            <a
+              className={className}
+              href="#"
+              onClick={this.agree.bind(this)}
+              style={{ display: 'inline-flex', alignItems: 'center', verticalAlign: 'middle', color: 'inherit' }}
+            >
+              {this.state.agreeChecked ? (
+                <CheckSquare className={className} style={{ width: '1.5rem', height: 'auto' }} />
+              ) : (
+                <Square className={className} style={{ width: '1.5rem', height: 'auto' }} />
+              )}
             </a>
             <span className={className}>I agree to the </span>
             <a className={className} href="https://enciv.org/terms/" target="_blank">
