@@ -4,7 +4,7 @@ import 'core-js/stable'
 import 'regenerator-runtime/runtime'
 
 import React from 'react'
-import ReactDOM from 'react-dom'
+import { createRoot, hydrateRoot } from 'react-dom/client'
 import bconsole from './bconsole'
 import socketlogger from './socketlogger'
 import IdleTracker from 'idle-tracker'
@@ -111,7 +111,8 @@ export default function clientMain(App, props) {
       window.Synapp.fontSize = parseFloat(
         window.getComputedStyle(window.reactContainer, null).getPropertyValue('font-size')
       )
-      ReactDOM.render(React.createElement(App, props), window.reactContainer) //createElement instead of <App {...props} /> because it doesn't build when installed as a package in another repo
+      if (!window._reactRoot) window._reactRoot = createRoot(window.reactContainer)
+      window._reactRoot.render(React.createElement(App, props)) //createElement instead of <App {...props} /> because it doesn't build when installed as a package in another repo
     } catch (error) {
       document.getElementsByTagName('body')[0].style.backgroundColor = 'red'
       logger.error('render Error', error)
@@ -128,7 +129,7 @@ export default function clientMain(App, props) {
     window.Synapp.fontSize = parseFloat(
       window.getComputedStyle(window.reactContainer, null).getPropertyValue('font-size')
     )
-    ReactDOM.hydrate(React.createElement(App, reactProps), window.reactContainer) //createElement instead of <App {...props} /> because it doesn't build when installed as a package in another repo
+    window._reactRoot = hydrateRoot(window.reactContainer, React.createElement(App, reactProps)) //createElement instead of <App {...props} /> because it doesn't build when installed as a package in another repo
   } catch (error) {
     document.getElementsByTagName('body')[0].style.backgroundColor = 'red'
     logger.info('hydrate Error', error)
