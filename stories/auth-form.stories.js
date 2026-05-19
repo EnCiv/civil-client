@@ -1,4 +1,4 @@
-import { React, useState } from 'react'
+import React, { useState } from 'react'
 import AuthForm from '../app/components/auth-form/auth-form'
 
 const Component = AuthForm
@@ -16,6 +16,10 @@ global.logger = {
 }
 
 const Template = args => {
+  const [authenticated, setAuthenticated] = useState(false)
+  function onChange(userInfo) {
+    setAuthenticated(userInfo)
+  }
   return (
     <div style={{ width: '100vw', height: '100vh' }}>
       <div style={{ width: '100%', textAlign: 'center' }}>
@@ -29,11 +33,15 @@ const Template = args => {
           textAlign: 'center',
           padding: '1rem',
           backgroundColor: '#fff',
-          height: '100vh',
         }}
       >
-        <Component {...args} />
+        <Component {...args} onChange={onChange} />
       </div>
+      {authenticated && (
+        <div style={{ width: '100%', textAlign: 'center' }}>
+          <div style={{ color: 'green' }}>Authenticated as {JSON.stringify(authenticated)}</div>
+        </div>
+      )}
     </div>
   )
 }

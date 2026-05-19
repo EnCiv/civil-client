@@ -1,5 +1,5 @@
 'use strict'
-import { React, useState, useLayoutEffect, useEffect } from 'react'
+import React, { useState, useLayoutEffect, useEffect } from 'react'
 
 const Component = props => {
   useEffect(() => {
