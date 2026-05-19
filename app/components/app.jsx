@@ -1,7 +1,6 @@
 'use strict'
 
 import React from 'react'
-import { hot } from 'react-hot-loader'
 import Footer from './footer'
 import ErrorBoundary from './error-boundary'
 
@@ -30,4 +29,4 @@ class App extends React.Component {
   }
 }
 
-export default hot(module)(App)
+export default App
