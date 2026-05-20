@@ -1,8 +1,18 @@
 'use strict'
 
-// send the loggingEvent to the sever - unchanged by layout
+// Returns an appender function for the custom logger (see civil-server's logger.js).
+// Emits the loggingEvent to the server via window.socket.
+export function createSocketloggerAppender() {
+  return function socketloggerAppender(loggingEvent) {
+    window.socket.emit('socketlogger', loggingEvent)
+  }
+}
+
+// ---------------------------------------------------------------------------
+// log4js compatibility shim — used by tests that still wire log4js directly.
+// ---------------------------------------------------------------------------
 function socketloggerAppender(layout, timezoneOffset) {
-  return function(loggingEvent) {
+  return function (loggingEvent) {
     window.socket.emit('socketlogger', loggingEvent)
   }
 }
@@ -16,4 +26,4 @@ function configure(config) {
 }
 
 export { socketloggerAppender as appender, configure }
-export default { appender: socketloggerAppender, configure: configure }
+export default { appender: socketloggerAppender, configure, createSocketloggerAppender }

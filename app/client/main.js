@@ -7,6 +7,7 @@ import React from 'react'
 import { createRoot, hydrateRoot } from 'react-dom/client'
 import bconsole from './bconsole'
 import socketlogger from './socketlogger'
+import { createLogger } from './logger'
 import IdleTracker from 'idle-tracker'
 
 export default function clientMain(App, props) {
@@ -64,39 +65,19 @@ export default function clientMain(App, props) {
     if (typeof process === 'undefined') global.process = {}
     if (!process.env) process.env = {}
     if (!process.env.NODE_ENV) process.env.NODE_ENV = 'development'
-    // process has to be defined before log4js is imported on the browser side.
-    process.env.LOG4JS_CONFIG = { appenders: [] } // webpack doesn't initialize the socket logger right - so just prevent log4js from initializing loggers
-    var log4js = require('log4js')
+
+    const bconsoleAppender = bconsole.createBconsoleAppender()
     if (window.socket.NoSocket) {
-      log4js.configure({
-        appenders: { bconsole: { type: bconsole } },
-        categories: {
-          default: { appenders: ['bconsole'], level: 'error' },
-        },
-        disableClustering: true,
-      })
-    } else if (typeof __webpack_public_path__ !== 'undefined') {
-      // if using web pack, this will be set on the browser. Dont' set it on the server
-      __webpack_public_path__ = 'http://localhost:3011/assets/webpack/'
-      log4js.configure({
-        appenders: { bconsole: { type: bconsole }, socketlogger: { type: socketlogger } },
-        categories: {
-          default: { appenders: ['bconsole', 'socketlogger'], level: window.env === 'production' ? 'info' : 'trace' },
-        },
-        disableClustering: true,
-      })
+      window.logger = createLogger([bconsoleAppender])
     } else {
-      // haven't seen this case in a while. mostly, __webpack_public_path is ''
-      log4js.configure({
-        appenders: { bconsole: { type: bconsole }, socketlogger: { type: socketlogger } },
-        categories: {
-          default: { appenders: ['bconsole', 'socketlogger'], level: window.env === 'production' ? 'info' : 'trace' },
-        },
-        disableClustering: true,
-      })
+      if (typeof __webpack_public_path__ !== 'undefined') {
+        // if using webpack, this will be set on the browser. Don't set it on the server
+        __webpack_public_path__ = 'http://localhost:3011/assets/webpack/'
+      }
+      const socketAppender = socketlogger.createSocketloggerAppender()
+      window.logger = createLogger([bconsoleAppender, socketAppender])
     }
 
-    window.logger = log4js.getLogger('browser')
     logger.info('client main running on browser', window.location.pathname, reactProps.browserConfig)
 
     if (!window.language) {
