@@ -64,8 +64,6 @@
     "idle-tracker": "^0.1.3",
     "is-email": "^1.0.2",
     "isemail": "^3.2.0",
-    "log4js": "git+https://github.com/ddfridley/log4js-node.git#onbrowser",
-    "log4js-extend": "^0.2.1",
     "os-browserify": "^0.3.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
@@ -74,10 +72,5 @@
     "stream-browserify": "^3.0.0",
     "superagent": "^10.3.0",
     "use-methods": "github:EnCiv/use-methods"
-  },
-  "husky": {
-    "hooks": {
-      "pre-commit": "pretty-quick --staged"
-    }
   }
 }

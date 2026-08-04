@@ -8,22 +8,4 @@ export function createSocketloggerAppender() {
   }
 }
 
-// ---------------------------------------------------------------------------
-// log4js compatibility shim — used by tests that still wire log4js directly.
-// ---------------------------------------------------------------------------
-function socketloggerAppender(layout, timezoneOffset) {
-  return function (loggingEvent) {
-    window.socket.emit('socketlogger', loggingEvent)
-  }
-}
-
-function configure(config) {
-  var layout
-  if (config.layout) {
-    layout = layouts.layout(config.layout.type, config.layout)
-  }
-  return socketloggerAppender(layout, config.timezoneOffset)
-}
-
-export { socketloggerAppender as appender, configure }
-export default { appender: socketloggerAppender, configure, createSocketloggerAppender }
+export default { createSocketloggerAppender }

@@ -11,30 +11,4 @@ export function createBconsoleAppender() {
   }
 }
 
-// ---------------------------------------------------------------------------
-// log4js compatibility shim — used by the tests in
-// civil-server/app/socket-apis/__tests__/socketlogger.js which still wire
-// log4js directly to verify the end-to-end pipeline.
-// ---------------------------------------------------------------------------
-function bconsoleAppender(layout, timezoneOffset) {
-  layout =
-    layout ||
-    function (e, t) {
-      var d = e.startTime.toString().split(' ')
-      return [d[3] + d[1] + d[2] + ' ' + d[4], e.categoryName, ...e.data]
-    }
-  return function (loggingEvent) {
-    console.log(...layout(loggingEvent, timezoneOffset))
-  }
-}
-
-function configure(config) {
-  var layout
-  if (config.layout) {
-    layout = layouts.layout(config.layout.type, config.layout)
-  }
-  return bconsoleAppender(layout, config.timezoneOffset)
-}
-
-export { bconsoleAppender as appender, configure }
-export default { appender: bconsoleAppender, configure, createBconsoleAppender }
+export default { createBconsoleAppender }

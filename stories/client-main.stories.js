@@ -17,6 +17,11 @@ export default {
   argTypes: {},
 }
 
+/*
+first the Component will render and it will say "Reload the browser", but then main-app will load and it will replace the contents of the div with id="synapp" with the main app, which will either say "Nothing Here" or "The main client is running!" depending on whether the iota prop is set. 
+
+In storybook this causes a rehydration error, but that's okay. 
+*/
 const Template = args => {
   return (
     <div style={{ width: '100vw', height: '100vh' }}>
