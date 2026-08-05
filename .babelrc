@@ -1,5 +1,5 @@
 {
-  "presets": ["@babel/preset-react", ["@babel/preset-env", { "targets": { "node": "10" } }]],
+  "presets": ["@babel/preset-react", ["@babel/preset-env", { "targets": { "node": "24" } }]],
   "plugins": [
     "@babel/plugin-transform-class-properties",
     "@babel/plugin-transform-runtime",
