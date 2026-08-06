@@ -78,6 +78,7 @@
     "github:EnCiv/use-methods#68186a1c8b125662918e69751d94c09607762c0d": true,
     "@swc/core@1.15.47": true,
     "unrs-resolver@1.12.2": true,
-    "esbuild@0.28.1": true
+    "esbuild@0.28.1": true,
+    "github:EnCiv/civil-client#update2026": true
   }
 }

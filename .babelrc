@@ -1,8 +1,0 @@
-{
-  "presets": ["@babel/preset-react", ["@babel/preset-env", { "targets": { "node": "24" } }]],
-  "plugins": [
-    "@babel/plugin-transform-class-properties",
-    "@babel/plugin-transform-runtime",
-    "@babel/plugin-transform-object-rest-spread"
-  ]
-}
