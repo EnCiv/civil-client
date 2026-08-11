@@ -13,23 +13,15 @@ import IdleTracker from 'idle-tracker'
 export default function clientMain(App, props) {
   if (typeof window !== 'undefined') {
     // only do this stuff if running on the browser.  On the server don't do it
-    if (
-      !(
+    if (typeof process === 'undefined') global.process = {}
+    if (!process.env) process.env = {}
+    if (!process.env.NODE_ENV) process.env.NODE_ENV = 'development'
+    if (!(
         // don't do sockets in these cases
-        (
-          window.NoSocket ||
-          location.hostname.startsWith('cc2020') || // host is the CDN
-          location.hostname.startsWith('undebate-stage1') || // host is stage-1 for testing
-          (reactProps &&
-            reactProps.iota &&
-            reactProps.iota.webComponent &&
-            reactProps.iota.webComponent.participants &&
-            !reactProps.iota.webComponent.participants.human &&
-            window.env === 'production')
-        ) // production this is a viewer and not a recorder
-      )
-    ) {
-      // do not use socket.io if connecting through the CDN. socket.io will not connect and it will get an error
+        // like on a domain behind a CDN
+          window.NoSocket || window.process.env.NO_SOCKET_IO
+    ))
+    {
       window.socket = io()
       window.addEventListener('unload', e => {
         // Cancel the event
@@ -53,6 +45,7 @@ export default function clientMain(App, props) {
       })
       idleTracker.start()
     } else {
+      // do not use socket.io if connecting through the CDN. socket.io will not connect and it will get an error
       window.NoSocket = true
       window.socket = {
         emit: (...args) => {
@@ -62,9 +55,6 @@ export default function clientMain(App, props) {
         NoSocket: true,
       }
     }
-    if (typeof process === 'undefined') global.process = {}
-    if (!process.env) process.env = {}
-    if (!process.env.NODE_ENV) process.env.NODE_ENV = 'development'
 
     const bconsoleAppender = bconsole.createBconsoleAppender()
     if (window.socket.NoSocket) {
