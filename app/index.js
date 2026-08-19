@@ -6,6 +6,7 @@ import clientMain from './client/main'
 import ErrorBoundary from './components/error-boundary'
 import useAuth from './components/use-auth'
 import Join from './components/join'
+import { createLogger } from './client/logger'
 
 // do NOT try to pass browser/client side objects through here (like AuthForm) - when you import them it will also import the server into the browser
-export { ResetPassword, AuthForm, clientMain, ErrorBoundary, useAuth, Join }
+export { ResetPassword, AuthForm, clientMain, ErrorBoundary, useAuth, Join, createLogger }
