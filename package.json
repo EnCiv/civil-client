@@ -1,19 +1,20 @@
 {
   "name": "civil-client",
-  "version": "0.0.13",
+  "version": "0.0.21",
   "description": "react components for civil-server",
   "main": "dist/index.js",
   "scripts": {
-    "start": "start-storybook -p 6006",
+    "start": "storybook dev -p 6006",
     "test": "jest",
     "test:coverage": "npm test -- --coverage",
     "test:watch": "npm test -- --watch",
-    "svgr": "svgr --icon --filename-case kebab assets/svg --out-dir app/svgr && rm app/svgr/index.js",
+    "svgr": "svgr --icon --filename-case kebab assets/svg --out-dir app/svgr",
     "transpile": "babel app --ignore **/__tests__ --out-dir dist --source-maps",
     "hot-transpile": "babel --watch app --ignore **/__tests__ --out-dir dist --source-maps",
     "prepare": "npm run svgr && npm run transpile",
-    "storybook": "start-storybook -p 6006",
-    "build-storybook": "build-storybook"
+    "storybook": "storybook dev -p 6006",
+    "test-storybook": "test-storybook --testTimeout=45000",
+    "build-storybook": "storybook build"
   },
   "repository": {
     "type": "git",
@@ -25,60 +26,58 @@
     "url": "https://github.com/EnCiv/civil-client/issues"
   },
   "homepage": "https://github.com/EnCiv/civil-client#readme",
-  "optionalDependencies": {
-    "@storybook/addon-actions": "^6.4.9",
-    "@storybook/addon-essentials": "^6.4.9",
-    "@storybook/addon-links": "^6.4.9",
-    "@storybook/builder-webpack5": "^6.4.9",
-    "@storybook/manager-webpack5": "^6.4.9",
-    "@storybook/react": "^6.4.9",
-    "enzyme": "^3.11.0",
-    "enzyme-adapter-react-16": "^1.15.6",
-    "express": "^4.17.1",
-    "husky": "^4.3.8",
-    "jest": "^27.4.5",
-    "jest-enzyme": "^7.1.2",
-    "nodemon": "^2.0.15",
-    "prettier": "^2.5.1",
-    "pretty-quick": "^3.1.2",
-    "webpack-dev-server": "^4.6.0"
-  },
   "devDependencies": {
-    "@babel/cli": "^7.16.0",
-    "@babel/core": "^7.16.5",
-    "@babel/plugin-proposal-class-properties": "^7.16.5",
-    "@babel/plugin-proposal-object-rest-spread": "^7.16.5",
-    "@babel/plugin-transform-react-inline-elements": "^7.16.5",
-    "@babel/plugin-transform-regenerator": "^7.16.5",
-    "@babel/plugin-transform-runtime": "^7.16.5",
-    "@babel/preset-env": "^7.16.5",
-    "@babel/preset-react": "^7.16.5",
-    "@svgr/cli": "^6.1.2",
-    "babel-loader": "^8.2.3",
-    "webpack": "^5.65.0",
-    "webpack-cli": "^4.9.1"
+    "@babel/cli": "^8.0.4",
+    "@babel/core": "^8.0.1",
+    "@babel/plugin-transform-class-properties": "^8.0.1",
+    "@babel/plugin-transform-object-rest-spread": "^8.0.1",
+    "@babel/plugin-transform-regenerator": "^8.0.2",
+    "@babel/plugin-transform-runtime": "^8.0.1",
+    "@babel/preset-env": "^8.0.2",
+    "@babel/preset-react": "^8.0.1",
+    "@svgr/cli": "^8.1.0",
+    "babel-loader": "^10.1.1",
+    "webpack": "^5.88.1",
+    "webpack-cli": "^7.2.1"
+  },
+  "optionalDependencies": {
+    "@storybook/addon-links": "^10.5.8",
+    "@storybook/react-webpack5": "^10.5.8",
+    "@storybook/test-runner": "^0.24.4",
+    "axe-playwright": "^2.2.2",
+    "constants-browserify": "^1.0.0",
+    "express": "^5.2.1",
+    "jest": "^30.4.2",
+    "nodemon": "^3.1.14",
+    "path-browserify": "^1.0.1",
+    "process": "^0.11.10",
+    "storybook": "^10.5.8",
+    "util": "^0.12.5",
+    "webpack-dev-server": "^6.0.0"
   },
   "dependencies": {
-    "@babel/runtime": "^7.16.5",
+    "browserify-zlib": "^0.2.0",
     "buffer": "^6.0.3",
     "classnames": "^2.3.1",
+    "color": "^5.0.3",
     "core-js": "^3.20.0",
     "idle-tracker": "^0.1.3",
     "is-email": "^1.0.2",
     "isemail": "^3.2.0",
-    "log4js": "git+https://github.com/ddfridley/log4js-node.git#onbrowser",
-    "log4js-extend": "^0.2.1",
-    "react": "^16.14.0",
-    "react-dom": "^16.14.0",
-    "react-hot-loader": "^4.13.0",
+    "os-browserify": "^0.3.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
     "react-jss": "^10.9.0",
-    "regenerator-runtime": "^0.13.9",
-    "superagent": "^6.1.0",
+    "regenerator-runtime": "^0.14.1",
+    "stream-browserify": "^3.0.0",
+    "superagent": "^10.3.0",
     "use-methods": "github:EnCiv/use-methods"
   },
-  "husky": {
-    "hooks": {
-      "pre-commit": "pretty-quick --staged"
-    }
+  "allowScripts": {
+    "core-js@3.50.0": true,
+    "github:EnCiv/use-methods@1.1.3": true,
+    "@swc/core@1.15.47": true,
+    "unrs-resolver@1.12.2": true,
+    "esbuild@0.28.1": true
   }
 }

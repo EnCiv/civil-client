@@ -1,4 +1,4 @@
-import { React } from 'react'
+import React, { useEffect } from 'react'
 import ResetPassword from '../app/components/auth-form/reset-password'
 
 const Component = ResetPassword
@@ -11,6 +11,14 @@ export default {
 }
 
 const Template = args => {
+  useEffect(() => {
+    window.socket = {
+      emit: (handle, token, resetKey, newPassword, cb) => {
+        if (handle !== 'reset-password') console.error('emit expected reset-password, got:', handle)
+        else setTimeout(() => cb(), 1000)
+      },
+    }
+  }, [])
   return (
     <div style={{ width: '100vw', height: '100vh' }}>
       <div

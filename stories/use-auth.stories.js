@@ -1,4 +1,4 @@
-import { React, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import useAuth, { authenticateSocketIo } from '../app/components/use-auth'
 
 const Component = useAuth
