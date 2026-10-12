@@ -1,3 +1,5 @@
+// https://github.com/EnCiv/civil-server/issues/65
+
 import React, { useEffect } from 'react'
 import ResetPassword from '../app/components/auth-form/reset-password'
 
@@ -15,10 +17,10 @@ const Template = args => {
     window.socket = {
       emit: (handle, token, resetKey, newPassword, cb) => {
         if (handle !== 'reset-password') console.error('emit expected reset-password, got:', handle)
-        else setTimeout(() => cb(), 1000)
+        else setTimeout(() => cb(args.error), 1000)
       },
     }
-  }, [])
+  }, [args.error])
   return (
     <div style={{ width: '100vw', height: '100vh' }}>
       <div
@@ -42,3 +44,12 @@ const Template = args => {
 
 export const Default = Template.bind({})
 Default.args = {}
+
+export const InvalidResetKey = Template.bind({})
+InvalidResetKey.args = { error: 'resetPassword - user not found' }
+
+export const ExpiredResetKey = Template.bind({})
+ExpiredResetKey.args = { error: 'token expired' }
+
+export const UnknownError = Template.bind({})
+UnknownError.args = { error: 'resetPassword - some unexpected error' }

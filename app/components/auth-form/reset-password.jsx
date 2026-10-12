@@ -1,3 +1,5 @@
+// https://github.com/EnCiv/civil-server/issues/65
+
 'use strict'
 
 import React, { useEffect, useState } from 'react'
@@ -14,13 +16,18 @@ function ResetPassword({ activationToken, returnTo }) {
   const [newPassword, setNewPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
   const [token, setToken] = useState(activationToken)
-  const MISSING_RESET_KEY = 'Missing Reset Key'
-  const MISSING_PASSWORDS = 'Missing Passwords'
-  const PASSWORD_MISMATCH_ERROR = "Passwords don't match"
+  const MISSING_RESET_KEY = 'No reset key provided. Please enter the reset key from your email.'
+  const INVALID_RESET_KEY = 'This reset key is not valid. Please check your email and try again.'
+  const RESET_KEY_EXPIRED = 'This reset key has expired. Please request a new password reset email.'
+  const MISSING_PASSWORDS = 'Password is missing. Please enter and confirm your new password.'
+  const PASSWORD_MISMATCH_ERROR = "Your passwords don't match. Please try again."
+  const GENERIC_RESET_ERROR = 'An unknown error occurred while resetting your password. Please try again or contact support.'
 
   useEffect(() => {
     setToken(activationToken)
   }, [activationToken])
+
+
 
   const sendResetPassword = e => {
     e.preventDefault()
@@ -45,11 +52,11 @@ function ResetPassword({ activationToken, returnTo }) {
     window.socket.emit('reset-password', token, resetKey, newPassword, error => {
       if (error) {
         setInfoMessage('')
-        setFormError('Error resetting password, please try again or contact support')
+        setFormError(parseResetPasswordError(error))
         console.error('Error resetting password: ', error)
         return
       }
-      setInfoMessage('Success! Redirecting')
+      setInfoMessage('Your password was successfully reset! Redirecting you back...')
       setFormError('')
       // is the timeout really necessary? copied from synapp
       setTimeout(() => (location.href = returnTo || '/join'), 800)
@@ -81,6 +88,18 @@ function ResetPassword({ activationToken, returnTo }) {
 
   const doPasswordsMatch = (newPass, confirmPass) => {
     return !newPass || !confirmPass || (newPass && confirmPass && newPass === confirmPass)
+  }
+
+  // maps server-thrown reset-password errors to user-facing messages
+  const parseResetPasswordError = error => {
+    const message = (error && error.message) || error || ''
+    if (message.includes('user not found') || message.includes('tokenExpirationDate missin')) {
+      return INVALID_RESET_KEY
+    }
+    if (message.includes('token expired')) {
+      return RESET_KEY_EXPIRED
+    }
+    return GENERIC_RESET_ERROR
   }
 
   const isResetButtonActive = () => {
