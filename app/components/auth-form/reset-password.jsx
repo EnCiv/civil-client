@@ -17,11 +17,8 @@ function ResetPassword({ activationToken, returnTo }) {
   const [confirmPassword, setConfirmPassword] = useState('')
   const [token, setToken] = useState(activationToken)
   const MISSING_RESET_KEY = 'No reset key provided. Please enter the reset key from your email.'
-  const INVALID_RESET_KEY = 'This reset key is not valid. Please check your email and try again.'
-  const RESET_KEY_EXPIRED = 'This reset key has expired. Please request a new password reset email.'
   const MISSING_PASSWORDS = 'Password is missing. Please enter and confirm your new password.'
   const PASSWORD_MISMATCH_ERROR = "Your passwords don't match. Please try again."
-  const GENERIC_RESET_ERROR = 'An unknown error occurred while resetting your password. Please try again or contact support.'
 
   useEffect(() => {
     setToken(activationToken)
@@ -49,11 +46,11 @@ function ResetPassword({ activationToken, returnTo }) {
       return
     }
     setInfoMessage('One moment...')
-    window.socket.emit('reset-password', token, resetKey, newPassword, error => {
-      if (error) {
+    window.socket.emit('reset-password', token, resetKey, newPassword, response => {
+      if (!response?.success) {
         setInfoMessage('')
-        setFormError(parseResetPasswordError(error))
-        console.error('Error resetting password: ', error)
+        setFormError(response?.message)
+        console.error('Error resetting password: ', response?.code)
         return
       }
       setInfoMessage('Your password was successfully reset! Redirecting you back...')
@@ -88,18 +85,6 @@ function ResetPassword({ activationToken, returnTo }) {
 
   const doPasswordsMatch = (newPass, confirmPass) => {
     return !newPass || !confirmPass || (newPass && confirmPass && newPass === confirmPass)
-  }
-
-  // maps server-thrown reset-password errors to user-facing messages
-  const parseResetPasswordError = error => {
-    const message = (error && error.message) || error || ''
-    if (message.includes('user not found') || message.includes('tokenExpirationDate missin')) {
-      return INVALID_RESET_KEY
-    }
-    if (message.includes('token expired')) {
-      return RESET_KEY_EXPIRED
-    }
-    return GENERIC_RESET_ERROR
   }
 
   const isResetButtonActive = () => {
