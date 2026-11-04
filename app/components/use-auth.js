@@ -81,7 +81,11 @@ function useAuth(onChange, userInfo = {}) {
             .post('/tempid')
             .send({ ...userInfo, email, password }) // don't want children to see password -
             .end((err, res) => {
-              if (err) logger.error('LoginStore.skip error', err)
+              if (err) {
+                logger.error('LoginStore.skip error', err)
+                dispatch({ error: err.message || 'Unable to create account', info: '', success: '' })
+                return
+              }
               switch (res.status) {
                 case 401:
                   dispatch({ error: 'This email address is already taken', info: '', success: '' })
@@ -107,7 +111,11 @@ function useAuth(onChange, userInfo = {}) {
             .post('/sign/in')
             .send({ ...userInfo, email, password })
             .end((err, res) => {
-              if (err) logger.error('Join.login error', err)
+              if (err) {
+                logger.error('Join.login error', err)
+                dispatch({ error: err.message || 'Unable to log in', info: '', success: '' })
+                return
+              }
               switch (res.status) {
                 case 429:
                   dispatch({ error: res.text, info: '', success: '' })
@@ -152,7 +160,11 @@ function useAuth(onChange, userInfo = {}) {
             .post('/sign/up')
             .send({ ...userInfo, email, password })
             .end((err, res) => {
-              if (err) logger.error('useAuth.signup error', err)
+              if (err) {
+                logger.error('useAuth.signup error', err)
+                dispatch({ error: err.message || 'Unable to create account', info: '', success: '' })
+                return
+              }
               switch (res.status) {
                 case 401:
                   dispatch({ error: 'This email address is already taken', info: '', success: '' })

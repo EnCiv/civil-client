@@ -96,7 +96,11 @@ class Join extends React.Component {
       .post('/sign/up')
       .send(userInfo)
       .end((err, res) => {
-        if (err) logger.error('Join.signup error', err)
+        if (err) {
+          logger.error('Join.signup error', err)
+          this.setState({ validationError: err.message || 'Unable to create account', info: null })
+          return
+        }
         switch (res.status) {
           case 401:
             this.setState({ validationError: 'This email address is already taken', info: null })
@@ -144,7 +148,11 @@ class Join extends React.Component {
       .post('/tempid')
       .send(userInfo)
       .end((err, res) => {
-        if (err) logger.error('Join.skip error', err)
+        if (err) {
+          logger.error('Join.skip error', err)
+          this.setState({ validationError: err.message || 'Unable to create account', info: null })
+          return
+        }
         switch (res.status) {
           case 401:
             this.setState({ validationError: 'This email address is already taken', info: null })
@@ -186,7 +194,11 @@ class Join extends React.Component {
       .post('/sign/in')
       .send(userInfo)
       .end((err, res) => {
-        if (err) logger.error('Join.login error', err)
+        if (err) {
+          logger.error('Join.login error', err)
+          this.setState({ validationError: err.message || 'Unable to log in', info: null })
+          return
+        }
         var errorMsg = ''
         switch (res.status) {
           case 429:
