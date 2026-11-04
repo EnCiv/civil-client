@@ -23,12 +23,15 @@ export default function clientMain(App, props) {
     ))
     {
       window.socket = io()
-      window.addEventListener('unload', e => {
-        // Cancel the event
-        //e.preventDefault(); // If you prevent default behavior in Mozilla Firefox prompt will always be shown
-        // Chrome requires returnValue to be set
-        e.returnValue = ''
-        window.socket.disconnect(true) // disconnect the socket so we don't see fewer connection timeouts on the server
+      window.addEventListener('pagehide', event => {
+        if (!event.persisted) {
+          window.socket.disconnect(true) // disconnect the socket before the document is discarded
+        }
+      })
+      window.addEventListener('pageshow', event => {
+        if (event.persisted && !window.socket.connected) {
+          window.socket.open()
+        }
       })
       // close the socket after inactivity so the development server can shut down
       const idleTracker = new IdleTracker({
@@ -36,9 +39,9 @@ export default function clientMain(App, props) {
         onIdleCallback: payload => {
           if (payload.idle) {
             console.info('disconnecting socket on idle')
-            socket.disconnect(true)
+            window.socket.disconnect(true)
           } else {
-            socket.open()
+            window.socket.open()
             console.info('opening socket')
           }
         },
