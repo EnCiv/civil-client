@@ -92,6 +92,9 @@ const AuthForm = props => {
       .end((err, res) => {
         if (err) {
           logger.error('Join.signup error', err)
+          setInfoMessage(null)
+          setFormValidationErrors([err.message || 'Unable to create account'])
+          return
         }
         setInfoMessage(null)
 
@@ -126,7 +129,11 @@ const AuthForm = props => {
       .send(updatedUserInfo)
       .end((err, res) => {
         setInfoMessage(null)
-        if (err) logger.error('Join.login error', err)
+        if (err) {
+          logger.error('Join.login error', err)
+          setLoginErrors([err.message || 'Unable to log in'])
+          return
+        }
         switch (res.status) {
           case 429:
             setLoginErrors([res.text])
