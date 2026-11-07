@@ -60,7 +60,7 @@ ExpiredResetKey.args = {
   response: {
     success: false,
     code: 'RESET_KEY_EXPIRED',
-    message: 'This reset key has expired. Please request a new password reset email.',
+    message: 'This reset key has expired. Please enter your email and we will send a new one.',
   },
 }
 

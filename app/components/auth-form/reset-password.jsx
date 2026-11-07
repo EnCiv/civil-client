@@ -8,7 +8,7 @@ import { FormInput } from './form-input'
 import { AuthBtn } from './auth-btn'
 import cx from 'classnames'
 
-function ResetPassword({ activationToken, returnTo }) {
+function ResetPassword({ activationToken, returnTo, onExpired }) {
   const classes = useStyles()
   const [infoMessage, setInfoMessage] = useState('')
   const [formError, setFormError] = useState('')
@@ -48,9 +48,11 @@ function ResetPassword({ activationToken, returnTo }) {
     setInfoMessage('One moment...')
     window.socket.emit('reset-password', token, resetKey, newPassword, response => {
       if (!response?.success) {
+        console.error('Error resetting password: ', response?.code)
+        // the host page can offer to send a new email; without it, show the server's message here
+        if (response?.code === 'RESET_KEY_EXPIRED' && onExpired) return onExpired(response.message)
         setInfoMessage('')
         setFormError(response?.message)
-        console.error('Error resetting password: ', response?.code)
         return
       }
       setInfoMessage('Your password was successfully reset! Redirecting you back...')
