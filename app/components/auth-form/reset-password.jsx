@@ -1,3 +1,5 @@
+// https://github.com/EnCiv/civil-server/issues/65
+
 'use strict'
 
 import React, { useEffect, useState } from 'react'
@@ -6,7 +8,7 @@ import { FormInput } from './form-input'
 import { AuthBtn } from './auth-btn'
 import cx from 'classnames'
 
-function ResetPassword({ activationToken, returnTo }) {
+function ResetPassword({ activationToken, returnTo, onExpired }) {
   const classes = useStyles()
   const [infoMessage, setInfoMessage] = useState('')
   const [formError, setFormError] = useState('')
@@ -14,13 +16,15 @@ function ResetPassword({ activationToken, returnTo }) {
   const [newPassword, setNewPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
   const [token, setToken] = useState(activationToken)
-  const MISSING_RESET_KEY = 'Missing Reset Key'
-  const MISSING_PASSWORDS = 'Missing Passwords'
-  const PASSWORD_MISMATCH_ERROR = "Passwords don't match"
+  const MISSING_RESET_KEY = 'No reset key provided. Please enter the reset key from your email.'
+  const MISSING_PASSWORDS = 'Password is missing. Please enter and confirm your new password.'
+  const PASSWORD_MISMATCH_ERROR = "Your passwords don't match. Please try again."
 
   useEffect(() => {
     setToken(activationToken)
   }, [activationToken])
+
+
 
   const sendResetPassword = e => {
     e.preventDefault()
@@ -42,14 +46,16 @@ function ResetPassword({ activationToken, returnTo }) {
       return
     }
     setInfoMessage('One moment...')
-    window.socket.emit('reset-password', token, resetKey, newPassword, error => {
-      if (error) {
+    window.socket.emit('reset-password', token, resetKey, newPassword, response => {
+      if (!response?.success) {
+        console.error('Error resetting password: ', response?.code)
+        // the host page can offer to send a new email; without it, show the server's message here
+        if (response?.code === 'RESET_KEY_EXPIRED' && onExpired) return onExpired(response.message)
         setInfoMessage('')
-        setFormError('Error resetting password, please try again or contact support')
-        console.error('Error resetting password: ', error)
+        setFormError(response?.message)
         return
       }
-      setInfoMessage('Success! Redirecting')
+      setInfoMessage('Your password was successfully reset! Redirecting you back...')
       setFormError('')
       // is the timeout really necessary? copied from synapp
       setTimeout(() => (location.href = returnTo || '/join'), 800)
